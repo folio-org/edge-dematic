@@ -63,7 +63,7 @@ public final class StagingDirectorMessageHelper {
   }
 
   private static String formatValue(int size, String value) {
-    return String.format("%-" + size + "." + size + "s", value);
+    return String.format("%-" + size + "." + size + "s", value); //NOSONAR
   }
 
   private static String buildMessageHeader(String messageType) {

@@ -40,7 +40,7 @@ public class SensitiveDataProtectionLogger extends Logger {
   }
 
   protected String format(String configKey, String format, Object... args) {
-    return String.format(methodTag(configKey) + format, args);
+    return String.format(methodTag(configKey) + format, args); //NOSONAR
   }
 
   private Request getSensitiveDataProtectedRequest(Request request) {
