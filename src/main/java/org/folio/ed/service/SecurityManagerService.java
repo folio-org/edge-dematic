@@ -130,7 +130,7 @@ public class SecurityManagerService {
     log.info("Saved credentials for user: [{}]", systemUserParameters.getUsername());
   }
 
-  private boolean assignPermissions(String userId) {
+  private void assignPermissions(String userId) {
     List<String> perms = readPermissionsFromResource(PERMISSIONS_FILE_PATH);
 
     if (isEmpty(perms)) {
@@ -141,7 +141,6 @@ public class SecurityManagerService {
       .toString(), userId, perms);
 
     permissionsClient.assignPermissionsToUser(permissions);
-    return true;
   }
 
   private void addPermissions(String userId) {

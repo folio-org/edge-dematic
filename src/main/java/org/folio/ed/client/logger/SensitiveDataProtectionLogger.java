@@ -17,6 +17,7 @@ import static feign.Util.valuesOrEmpty;
 
 @Slf4j
 public class SensitiveDataProtectionLogger extends Logger {
+  private static final int TOKEN_VISIBLE_CHARACTERS_NUMBER = 5;
 
   @Override
   protected void logRequest(String configKey, Level logLevel, Request request) {
@@ -58,7 +59,7 @@ public class SensitiveDataProtectionLogger extends Logger {
       if(XOkapiHeaders.TOKEN.equals(field)) {
         List<String> tokens = new ArrayList<>();
         for (String value : valuesOrEmpty(headers, field)) {
-          tokens.add("***" + value.substring(value.length() - 5));
+          tokens.add("***" + value.substring(value.length() - TOKEN_VISIBLE_CHARACTERS_NUMBER));
         }
         result.put(field, tokens);
       } else {

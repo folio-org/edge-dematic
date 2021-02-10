@@ -46,7 +46,6 @@ public class TenantController implements TenantApi {
       try {
         folioSpringLiquibase.performLiquibaseUpdate();
       } catch (LiquibaseException e) {
-        e.printStackTrace();
         log.error("Liquibase error", e);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("Liquibase error: " + e.getMessage());
