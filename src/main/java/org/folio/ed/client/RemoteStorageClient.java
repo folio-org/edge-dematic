@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(value = "remote-storage")
 public interface RemoteStorageClient {
-
   @GetMapping(path = "/accessions", produces = "application/json")
   ResultList<AccessionQueueRecord> getAccessionsByQuery(@RequestParam("query") String query);
 
@@ -31,6 +30,12 @@ public interface RemoteStorageClient {
   @PostMapping("/retrieve/{configurationId}/checkInItem")
   ResponseEntity<String> checkInItem(@PathVariable("configurationId") String configurationId,
       ItemBarcodeRequest itemBarcodeRequest);
+
+  @PutMapping("/retrievals/barcode/{barcode}")
+  String setRetrievalByBarcode(@PathVariable("barcode") String barcode);
+
+  @PostMapping("/{configurationId}/checkInItem")
+  ResponseEntity<String> checkInItem(@PathVariable("configurationId") String configurationId, ItemBarcodeRequest itemBarcodeRequest);
 
   @GetMapping("/configurations")
   Configurations getStorageConfigurations();

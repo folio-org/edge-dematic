@@ -3,6 +3,9 @@ package org.folio.ed.integration;
 import static org.awaitility.Awaitility.await;
 import static org.folio.ed.support.ServerMessageHandler.TRANSACTION_RESPONSE_MESSAGE;
 import static org.folio.ed.support.ServerMessageHelper.HEARTBEAT_MESSAGE;
+import static org.folio.ed.util.MessageTypes.HEARTBEAT;
+import static org.folio.ed.util.MessageTypes.INVENTORY_CONFIRM;
+import static org.folio.ed.util.MessageTypes.STATUS_MESSAGE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.matches;
@@ -10,13 +13,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.folio.ed.TestBase;
+import org.folio.ed.service.RemoteStorageService;
 import org.folio.ed.service.StagingDirectorFlowsService;
 import org.folio.ed.support.ServerMessageHandler;
 import org.folio.ed.domain.dto.Configuration;
 import org.folio.ed.config.MockServerConfig;
 import org.folio.ed.support.ServerMessageHelper;
-import org.folio.ed.handler.ResponseHandler;
-import org.folio.ed.handler.StatusMessageHandler;
+import org.folio.ed.handler.PrimaryChannelHandler;
+import org.folio.ed.handler.StatusChannelHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -27,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 @Import(MockServerConfig.class)
 public class StagingDirectorTest extends TestBase {
+  private static final String BARCODE = "697685458679";
   @Autowired
   private StagingDirectorFlowsService flowsService;
 
@@ -37,10 +42,13 @@ public class StagingDirectorTest extends TestBase {
   private ServerMessageHelper serverMessageHelper;
 
   @SpyBean
-  private StatusMessageHandler statusMessageHandler;
+  private RemoteStorageService remoteStorageService;
 
   @SpyBean
-  private ResponseHandler responseHandler;
+  private StatusChannelHandler statusChannelHandler;
+
+  @SpyBean
+  private PrimaryChannelHandler primaryChannelHandler;
 
   @SpyBean
   private ServerMessageHandler serverMessageHandler;
@@ -53,10 +61,8 @@ public class StagingDirectorTest extends TestBase {
       flowsService.registerPrimaryChannelHeartbeatPoller(buildConfiguration());
 
     await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
-      verify(serverMessageHandler, times(1))
-        .handle(matches("HM00001\\d{14}"), any());
-      verify(responseHandler, times(1))
-        .handle(eq(TRANSACTION_RESPONSE_MESSAGE), any());
+      verify(serverMessageHandler).handle(matches("HM\\d{19}"), any());
+      verify(primaryChannelHandler).handle(eq(TRANSACTION_RESPONSE_MESSAGE), any());
     });
 
     integrationFlowContext.remove(f1.getId());
@@ -65,15 +71,13 @@ public class StagingDirectorTest extends TestBase {
 
   @Test
   void shouldReceiveHeartbeatMessageFromStatusChannel() {
-    serverMessageHelper.setMessageType("HM");
+    serverMessageHelper.setMessageType(HEARTBEAT);
     IntegrationFlowContext.IntegrationFlowRegistration f1 =
       flowsService.registerStatusChannelFlow(buildConfiguration());
 
     await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
-      verify(statusMessageHandler, times(1))
-        .handle(eq(HEARTBEAT_MESSAGE), any());
-      verify(serverMessageHandler, times(1))
-        .handle(matches("TR00001\\d{14}000"), any());
+      verify(statusChannelHandler).handle(eq(HEARTBEAT_MESSAGE), any());
+      verify(serverMessageHandler).handle(matches("TR\\d{19}000"), any());
     });
 
     integrationFlowContext.remove(f1.getId());
@@ -87,10 +91,25 @@ public class StagingDirectorTest extends TestBase {
       flowsService.registerPrimaryChannelAccessionPoller(buildConfiguration());
 
     await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
-      verify(serverMessageHandler, times(1))
-        .handle(matches("IA\\d{5}\\d{14}697685458679\\s{2}some-callnumber\\s{35}Nod\\s{32}Barnes, Adrian\\s{36}"), any());
-      verify(responseHandler, times(1))
-        .handle(eq(TRANSACTION_RESPONSE_MESSAGE), any());
+      verify(serverMessageHandler)
+        .handle(matches("IA\\d{19}697685458679\\s{2}some-callnumber\\s{35}Nod\\s{32}Barnes, Adrian\\s{21}"), any());
+      verify(primaryChannelHandler).handle(eq(TRANSACTION_RESPONSE_MESSAGE), any());
+    });
+
+    integrationFlowContext.remove(f1.getId());
+    integrationFlowContext.remove(f2.getId());
+  }
+
+  @Test
+  void shouldSendStatusCheckMessageWhenNewRetrievalIsPresent() {
+    IntegrationFlowContext.IntegrationFlowRegistration f1 =
+      flowsService.registerPrimaryChannelOutboundGateway(buildConfiguration());
+    IntegrationFlowContext.IntegrationFlowRegistration f2 =
+      flowsService.registerPrimaryChannelRetrievalPoller(buildConfiguration());
+
+    await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+      verify(serverMessageHandler).handle(matches("SC\\d{19}697685458679\\s{2}"), any());
+      verify(primaryChannelHandler).handle(eq(TRANSACTION_RESPONSE_MESSAGE), any());
     });
 
     integrationFlowContext.remove(f1.getId());
@@ -99,15 +118,48 @@ public class StagingDirectorTest extends TestBase {
 
   @Test
   void shouldSetAccessionedWhenInventoryConfirmReceived() {
-    serverMessageHelper.setMessageType("IC");
+    serverMessageHelper.setMessageType(INVENTORY_CONFIRM);
     IntegrationFlowContext.IntegrationFlowRegistration f1 =
+      flowsService.registerFeedbackChannelListener(buildConfiguration());
+    IntegrationFlowContext.IntegrationFlowRegistration f2 =
       flowsService.registerStatusChannelFlow(buildConfiguration());
 
-    await().atMost(1, TimeUnit.SECONDS).untilAsserted(() ->
-      verify(serverMessageHandler, times(1))
-        .handle(matches("TR00001\\d{14}000"), any()));
+    await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+        verify(serverMessageHandler).handle(matches("TR\\d{19}000"), any());
+        verify(remoteStorageService).setAccessionedByBarcode(BARCODE);
+      });
 
     integrationFlowContext.remove(f1.getId());
+    integrationFlowContext.remove(f2.getId());
+  }
+
+  @Test
+  void shouldSendPickRequestMessageAndSetRetrievalWhenStatusMessageSucceeded() {
+    remoteStorageService.getRetrievalQueueRecords(buildConfiguration().getId());
+    serverMessageHelper.setMessageType(STATUS_MESSAGE);
+
+    IntegrationFlowContext.IntegrationFlowRegistration f1 =
+      flowsService.registerFeedbackChannelListener(buildConfiguration());
+    IntegrationFlowContext.IntegrationFlowRegistration f2 =
+      flowsService.registerPrimaryChannelOutboundGateway(buildConfiguration());
+    IntegrationFlowContext.IntegrationFlowRegistration f3 =
+      flowsService.registerStatusChannelFlow(buildConfiguration());
+
+    await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> {
+        verify(statusChannelHandler).handle(matches("SM\\d{19}697685458679\\s{2}007"), any());
+        verify(serverMessageHandler).handle(matches("PR\\d{19}697685458679\\s{2}loc\\s{4}7137806\\s{13}sample patron\\s{27}some-callnumber\\s{35}Nod\\s{32}Barnes, Adrian\\s{21}"), any());
+        verify(serverMessageHandler).handle(matches("TR\\d{19}000"), any());
+        verify(remoteStorageService).setRetrievalByBarcode(matches(BARCODE));
+      });
+
+    integrationFlowContext.remove(f1.getId());
+    integrationFlowContext.remove(f2.getId());
+    integrationFlowContext.remove(f3.getId());
+  }
+
+  @Test
+  void shouldSetReturnedWhenItemReturnedMessageReceived() {
+
   }
 
   private Configuration buildConfiguration() {

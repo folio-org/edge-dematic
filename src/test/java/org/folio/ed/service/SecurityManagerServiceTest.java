@@ -3,10 +3,6 @@ package org.folio.ed.service;
 import static java.util.stream.Collectors.toList;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.anyOf;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.equalTo;
 
 import org.folio.ed.TestBase;
 import org.folio.ed.domain.entity.SystemUserParameters;

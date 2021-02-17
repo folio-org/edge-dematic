@@ -2,6 +2,7 @@ package org.folio.ed.config;
 
 import org.folio.ed.support.ServerMessageHandler;
 import org.folio.ed.support.ServerMessageHelper;
+import org.folio.ed.util.StagingDirectorSerializerDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -14,6 +15,7 @@ import org.springframework.integration.ip.IpHeaders;
 import org.springframework.integration.ip.dsl.Tcp;
 import org.springframework.integration.ip.dsl.TcpServerConnectionFactorySpec;
 import org.springframework.integration.ip.tcp.connection.TcpConnectionOpenEvent;
+import org.springframework.integration.ip.tcp.serializer.ByteArrayCrLfSerializer;
 import org.springframework.integration.support.MessageBuilder;
 
 @TestConfiguration
@@ -27,10 +29,15 @@ public class MockServerConfig {
   @Autowired
   private ServerMessageHelper serverMessageHelper;
 
+  @Autowired
+  private StagingDirectorSerializerDeserializer serializerDeserializer;
+
   // primary channel stub server
   @Bean
   public TcpServerConnectionFactorySpec primaryChannelFactory() {
-    return Tcp.netServer(primaryPort);
+    return Tcp.netServer(primaryPort)
+      .serializer(serializerDeserializer)
+      .deserializer(serializerDeserializer);
   }
 
   @Bean
@@ -44,7 +51,9 @@ public class MockServerConfig {
   // status channel stub server
   @Bean
   public TcpServerConnectionFactorySpec statusChannelFactory() {
-    return Tcp.netServer(statusPort);
+    return Tcp.netServer(statusPort)
+      .serializer(serializerDeserializer)
+      .deserializer(serializerDeserializer);
   }
 
   @Bean

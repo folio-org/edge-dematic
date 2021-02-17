@@ -3,7 +3,9 @@ package org.folio.ed.service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,8 @@ import lombok.RequiredArgsConstructor;
 public class RemoteStorageService {
   private static final String STAGING_DIRECTOR_NAME = "Dematic_SD";
 
+  private final Map<String, List<RetrievalQueueRecord>> retrievalsMap = new HashMap<>();
+
   private final RemoteStorageClient remoteStorageClient;
   private final SecurityManagerService securityManagerService;
   private final SystemParametersHolder systemParametersHolder;
@@ -47,6 +51,19 @@ public class RemoteStorageService {
     FolioExecutionScopeExecutionContextManager
       .beginFolioExecutionContext(new AsyncFolioExecutionContext(systemUserParameters, null));
     remoteStorageClient.setAccessionedByBarcode(barcode);
+  }
+
+  public RetrievalQueueRecord getRetrievalByBarcode(String barcode, String configId) {
+    return retrievalsMap.getOrDefault(configId, Collections.emptyList()).stream()
+      .filter(record -> barcode.equals(record.getItemBarcode()))
+      .findAny().orElse(null);
+  }
+
+  public void setRetrievalByBarcode(String barcode) {
+    var systemUserParameters = securityManagerService.getSystemUserParameters(tenantHolder.getTenantId());
+    FolioExecutionScopeExecutionContextManager.beginFolioExecutionContext(
+      new AsyncFolioExecutionContext(systemUserParameters, null));
+    remoteStorageClient.setRetrievalByBarcode(barcode);
   }
 
   public List<Configuration> getStagingDirectorConfigurations() {
