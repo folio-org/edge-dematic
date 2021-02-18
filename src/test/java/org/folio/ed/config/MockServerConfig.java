@@ -15,7 +15,6 @@ import org.springframework.integration.ip.IpHeaders;
 import org.springframework.integration.ip.dsl.Tcp;
 import org.springframework.integration.ip.dsl.TcpServerConnectionFactorySpec;
 import org.springframework.integration.ip.tcp.connection.TcpConnectionOpenEvent;
-import org.springframework.integration.ip.tcp.serializer.ByteArrayCrLfSerializer;
 import org.springframework.integration.support.MessageBuilder;
 
 @TestConfiguration
@@ -80,13 +79,11 @@ public class MockServerConfig {
       .get();
   }
 
-  // message handler
   @Bean
   public ServerMessageHandler serverMessageHandler() {
     return new ServerMessageHandler();
   }
 
-  // message helper
   @Bean
   public ServerMessageHelper serverMessageHelper() {
     return new ServerMessageHelper();

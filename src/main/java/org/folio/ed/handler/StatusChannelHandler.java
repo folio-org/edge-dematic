@@ -22,12 +22,13 @@ public class StatusChannelHandler {
   private final RemoteStorageService remoteStorageService;
 
   public Object handle(String payload, String configId) {
-    LOGGER.info("Status channel handler income: {}", payload);
+    LOGGER.info("Status channel income: {}", payload);
     if ((resolveMessageType(payload) == INVENTORY_CONFIRM) &&
       (extractErrorCode(payload) == SUCCESS)) {
-      remoteStorageService.setAccessionedByBarcode(extractBarcode(payload));
-    } else if (resolveMessageType(payload) == ITEM_RETURNED) {
-      remoteStorageService.checkInItemByBarcode(configId, extractBarcode(payload));
+      remoteStorageService.setAccessionedAsync(extractBarcode(payload));
+    } else if ((resolveMessageType(payload) == ITEM_RETURNED) &&
+      (extractErrorCode(payload) == SUCCESS)) {
+      remoteStorageService.returnItemByBarcode(configId, extractBarcode(payload));
     }
     return buildTransactionResponseMessage(payload);
   }

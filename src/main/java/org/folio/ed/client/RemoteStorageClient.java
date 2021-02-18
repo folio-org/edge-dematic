@@ -29,13 +29,11 @@ public interface RemoteStorageClient {
 
   @PostMapping("/retrieve/{configurationId}/checkInItem")
   ResponseEntity<String> checkInItem(@PathVariable("configurationId") String configurationId,
-      ItemBarcodeRequest itemBarcodeRequest);
+    ItemBarcodeRequest itemBarcodeRequest);
 
-  @PutMapping("/retrievals/barcode/{barcode}")
-  String setRetrievalByBarcode(@PathVariable("barcode") String barcode);
-
-  @PostMapping("/{configurationId}/checkInItem")
-  ResponseEntity<String> checkInItem(@PathVariable("configurationId") String configurationId, ItemBarcodeRequest itemBarcodeRequest);
+  @PostMapping("/return/{configurationId}")
+  ResponseEntity<String> returnItem(@PathVariable("configurationId") String configurationId,
+    ItemBarcodeRequest itemBarcodeRequest);
 
   @GetMapping("/configurations")
   Configurations getStorageConfigurations();

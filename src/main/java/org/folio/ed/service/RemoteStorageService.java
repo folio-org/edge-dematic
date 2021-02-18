@@ -2,6 +2,7 @@ package org.folio.ed.service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,17 +11,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.folio.ed.client.RemoteStorageClient;
-import org.folio.ed.domain.AsyncFolioExecutionContext;
-import org.folio.ed.domain.SystemParametersHolder;
 import org.folio.ed.domain.dto.AccessionQueueRecord;
 import org.folio.ed.domain.dto.Configuration;
 import org.folio.ed.domain.dto.RetrievalQueueRecord;
 import org.folio.ed.domain.request.ItemBarcodeRequest;
-import org.folio.rs.domain.dto.AsrItem;
-import org.folio.rs.domain.dto.AsrItems;
-import org.folio.rs.domain.dto.AsrRequest;
-import org.folio.rs.domain.dto.AsrRequests;
-import org.folio.spring.scope.FolioExecutionScopeExecutionContextManager;
+import org.folio.ed.domain.dto.AsrItem;
+import org.folio.ed.domain.dto.AsrItems;
+import org.folio.ed.domain.dto.AsrRequest;
+import org.folio.ed.domain.dto.AsrRequests;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -35,22 +33,15 @@ public class RemoteStorageService {
   private final Map<String, List<RetrievalQueueRecord>> retrievalsMap = new HashMap<>();
 
   private final RemoteStorageClient remoteStorageClient;
-  private final SecurityManagerService securityManagerService;
-  private final SystemParametersHolder systemParametersHolder;
 
   public List<AccessionQueueRecord> getAccessionQueueRecords(String storageId) {
-    var systemUserParameters = securityManagerService.getSystemUserParameters(systemParametersHolder.getTenantId());
-    FolioExecutionScopeExecutionContextManager
-      .beginFolioExecutionContext(new AsyncFolioExecutionContext(systemUserParameters, null));
     return remoteStorageClient.getAccessionsByQuery(buildQueryByStorageId(storageId))
       .getResult();
   }
 
-  public void setAccessionedByBarcode(String barcode) {
-    var systemUserParameters = securityManagerService.getSystemUserParameters(systemParametersHolder.getTenantId());
-    FolioExecutionScopeExecutionContextManager
-      .beginFolioExecutionContext(new AsyncFolioExecutionContext(systemUserParameters, null));
-    remoteStorageClient.setAccessionedByBarcode(barcode);
+  public List<RetrievalQueueRecord> getRetrievalQueueRecords(String storageId) {
+    retrievalsMap.put(storageId, remoteStorageClient.getRetrievalsByQuery(buildQueryByStorageId(storageId)).getResult());
+    return retrievalsMap.get(storageId);
   }
 
   public RetrievalQueueRecord getRetrievalByBarcode(String barcode, String configId) {
@@ -59,17 +50,7 @@ public class RemoteStorageService {
       .findAny().orElse(null);
   }
 
-  public void setRetrievalByBarcode(String barcode) {
-    var systemUserParameters = securityManagerService.getSystemUserParameters(tenantHolder.getTenantId());
-    FolioExecutionScopeExecutionContextManager.beginFolioExecutionContext(
-      new AsyncFolioExecutionContext(systemUserParameters, null));
-    remoteStorageClient.setRetrievalByBarcode(barcode);
-  }
-
   public List<Configuration> getStagingDirectorConfigurations() {
-    var systemUserParameters = securityManagerService.getSystemUserParameters(systemParametersHolder.getTenantId());
-    FolioExecutionScopeExecutionContextManager
-      .beginFolioExecutionContext(new AsyncFolioExecutionContext(systemUserParameters, null));
     return remoteStorageClient.getStorageConfigurations()
       .getConfigurations()
       .stream()
@@ -101,6 +82,12 @@ public class RemoteStorageService {
     var itemBarcodeRequest = new ItemBarcodeRequest();
     itemBarcodeRequest.setItemBarcode(itemBarcode);
     return remoteStorageClient.checkInItem(remoteStorageConfigurationId, itemBarcodeRequest);
+  }
+
+  public ResponseEntity<String> returnItemByBarcode(String remoteStorageConfigurationId, String itemBarcode) {
+    var itemBarcodeRequest = new ItemBarcodeRequest();
+    itemBarcodeRequest.setItemBarcode(itemBarcode);
+    return remoteStorageClient.returnItem(remoteStorageConfigurationId, itemBarcodeRequest);
   }
 
   public AsrRequests getRequests(String remoteStorageConfigurationId) {

@@ -31,7 +31,8 @@ public class PrimaryChannelHandler {
     }
     if (resolveMessageType(payload) == TRANSACTION_RESPONSE) {
       if (nonNull(picksMap.get(configId))) {
-        remoteStorageService.setRetrievalByBarcode(picksMap.get(configId));
+        remoteStorageService.setRetrievedAsync(picksMap.get(configId));
+        remoteStorageService.checkInItemByBarcode(configId, picksMap.get(configId));
         picksMap.remove(configId);
       }
       return null;

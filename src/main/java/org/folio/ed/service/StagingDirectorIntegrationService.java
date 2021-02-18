@@ -4,32 +4,25 @@ import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolveAddre
 import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolvePollingTimeFrame;
 import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolvePort;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
 import lombok.RequiredArgsConstructor;
-import org.folio.ed.domain.SystemParametersHolder;
 import org.folio.ed.domain.dto.Configuration;
 import org.folio.ed.handler.FeedbackChannelHandler;
 import org.folio.ed.handler.PrimaryChannelHandler;
 import org.folio.ed.handler.StatusChannelHandler;
 import org.folio.ed.util.StagingDirectorMessageHelper;
 import org.folio.ed.util.StagingDirectorSerializerDeserializer;
-import org.folio.spring.scope.FolioExecutionScopeExecutionContextManager;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.serializer.Serializer;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.dsl.Pollers;
-import org.springframework.integration.dsl.Transformers;
 import org.springframework.integration.dsl.context.IntegrationFlowContext;
 import org.springframework.integration.ip.dsl.Tcp;
-import org.springframework.integration.ip.dsl.TcpClientConnectionFactorySpec;
-import org.springframework.integration.ip.tcp.serializer.ByteArrayCrLfSerializer;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class StagingDirectorFlowsService {
+public class StagingDirectorIntegrationService {
   private static final String POLLER_CHANNEL_POSTFIX = "_poller";
   private static final String FEEDBACK_CHANNEL_POSTFIX = "_feedback";
 
@@ -41,12 +34,10 @@ public class StagingDirectorFlowsService {
 
   private final IntegrationFlowContext integrationFlowContext;
   private final RemoteStorageService remoteStorageService;
-  private final SecurityManagerService securityManagerService;
-  private final SystemParametersHolder systemParametersHolder;
   private final StatusChannelHandler statusChannelHandler;
   private final PrimaryChannelHandler primaryChannelHandler;
   private final FeedbackChannelHandler feedbackChannelHandler;
-  private final StagingDirectorSerializerDeserializer stagingDirectorSerializerDeserializer;
+  private final StagingDirectorSerializerDeserializer serializerDeserializer;
 
   @Scheduled(fixedDelayString = "${configurations.update.timeframe}")
   public void updateIntegrationFlows() {
@@ -74,15 +65,13 @@ public class StagingDirectorFlowsService {
     return integrationFlowContext
       .registration(IntegrationFlows
         .from(configuration.getName() + POLLER_CHANNEL_POSTFIX)
-        .transform(Transformers.objectToString())
         .<String>handle((p, h) -> primaryChannelHandler.handle(p, configuration.getId()))
         .handle(Tcp
           .outboundGateway(Tcp
             .netClient(resolveAddress(configuration.getUrl()), resolvePort(configuration.getUrl()))
             .soTimeout(responseTimeout)
-            .serializer(stagingDirectorSerializerDeserializer)
-            .deserializer(stagingDirectorSerializerDeserializer)))
-        .transform(Transformers.objectToString())
+            .serializer(serializerDeserializer)
+            .deserializer(serializerDeserializer)))
         .<String>handle((p, h) -> primaryChannelHandler.handle(p, configuration.getId()))
         .get())
       .register();
@@ -128,8 +117,6 @@ public class StagingDirectorFlowsService {
     return integrationFlowContext
       .registration(IntegrationFlows
         .from(MessageChannels.publishSubscribe(configuration.getName() + FEEDBACK_CHANNEL_POSTFIX))
-        .transform(Transformers.objectToString())
-        .log(msg -> "FeedbackListener: " + msg.getPayload())
         .<String>handle((p, h) -> feedbackChannelHandler.handle(p, configuration.getId()))
         .channel(MessageChannels.publishSubscribe(configuration.getName() + POLLER_CHANNEL_POSTFIX))
         .get())
@@ -137,16 +124,16 @@ public class StagingDirectorFlowsService {
   }
 
   public IntegrationFlowContext.IntegrationFlowRegistration registerStatusChannelFlow(Configuration configuration) {
-    TcpClientConnectionFactorySpec statusChannelFactorySpec =
-      Tcp.netClient(resolveAddress(configuration.getStatusUrl()), resolvePort(configuration.getStatusUrl()))
-        .singleUseConnections(false)
-        .serializer(stagingDirectorSerializerDeserializer)
-        .deserializer(stagingDirectorSerializerDeserializer);
     return integrationFlowContext
       .registration(IntegrationFlows
-        .from(Tcp.inboundGateway(statusChannelFactorySpec).clientMode(true))
+        .from(Tcp
+          .inboundGateway(Tcp
+            .netClient(resolveAddress(configuration.getStatusUrl()), resolvePort(configuration.getStatusUrl()))
+              .singleUseConnections(false)
+              .serializer(serializerDeserializer)
+              .deserializer(serializerDeserializer))
+          .clientMode(true))
         .channel(configuration.getName() + FEEDBACK_CHANNEL_POSTFIX)
-        .transform(Transformers.objectToString())
         .<String>handle((p, h) -> statusChannelHandler.handle(p, configuration.getId()))
         .get())
       .register();
