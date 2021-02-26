@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class RemoteStorageService {
   private static final String STAGING_DIRECTOR_NAME = "Dematic_SD";
+  private static final String STORAGE_ID = "storageId=";
 
   private final Map<String, List<RetrievalQueueRecord>> retrievalsMap = new HashMap<>();
 
@@ -33,12 +34,12 @@ public class RemoteStorageService {
   private final RetrievalQueueRecordToAsrRequestConverter retrievalQueueRecordToAsrRequestConverter;
 
   public List<AccessionQueueRecord> getAccessionQueueRecords(String storageId) {
-    return remoteStorageClient.getAccessionsByQuery("storageId=" + storageId + "&accessioned=false")
+    return remoteStorageClient.getAccessionsByQuery(STORAGE_ID + storageId + "&accessioned=false")
       .getResult();
   }
 
   public List<RetrievalQueueRecord> getRetrievalQueueRecords(String storageId) {
-    retrievalsMap.put(storageId, remoteStorageClient.getRetrievalsByQuery("storageId=" + storageId + "&retrieved=false")
+    retrievalsMap.put(storageId, remoteStorageClient.getRetrievalsByQuery(STORAGE_ID + storageId + "&retrieved=false")
       .getResult());
     return retrievalsMap.get(storageId);
   }
@@ -80,7 +81,7 @@ public class RemoteStorageService {
   public AsrRequests getRequests(String remoteStorageConfigurationId) {
     var asrRequests = new AsrRequests();
     asrRequests
-      .asrRequests(remoteStorageClient.getRetrievalsByQuery("storageId=" + remoteStorageConfigurationId + "&retrieved=false")
+      .asrRequests(remoteStorageClient.getRetrievalsByQuery(STORAGE_ID + remoteStorageConfigurationId + "&retrieved=false")
         .getResult()
         .stream()
         .map(retrievalQueueRecordToAsrRequestConverter::convert)
