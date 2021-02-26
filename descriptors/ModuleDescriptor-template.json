@@ -49,6 +49,14 @@
           "modulePermissions": [
             "remote-storage.check-in.item.post"
           ]
+        },
+        {
+          "methods": ["POST"],
+          "pathPattern": "/asrService/asr/updateASRItemStatusAvailable/{remoteStorageConfigurationId}",
+          "permissionsRequired" : [],
+          "modulePermissions": [
+            "remote-storage.return.item.post"
+          ]
         }
       ]
     },
