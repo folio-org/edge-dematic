@@ -1,5 +1,6 @@
 package org.folio.ed.service;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolveAddress;
 import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolvePollingTimeFrame;
 import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolvePort;
@@ -23,8 +24,8 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class StagingDirectorIntegrationService {
-  private static final String POLLER_CHANNEL_POSTFIX = "_poller";
-  private static final String FEEDBACK_CHANNEL_POSTFIX = "_feedback";
+  private static final String POLLER_CHANNEL_POSTFIX = "_pollerChannel";
+  private static final String FEEDBACK_CHANNEL_POSTFIX = "_feedbackChannel";
 
   @Value("${primary.channel.heartbeat.timeframe}")
   private long heartbeatTimeframe;
@@ -146,7 +147,8 @@ public class StagingDirectorIntegrationService {
               .singleUseConnections(false)
               .serializer(serializerDeserializer)
               .deserializer(serializerDeserializer))
-          .clientMode(true))
+          .clientMode(true)
+          .retryInterval(SECONDS.toMillis(1)))
         .channel(configuration.getName() + FEEDBACK_CHANNEL_POSTFIX)
         .<String>handle((p, h) -> statusChannelHandler.handle(p, configuration))
         .get())

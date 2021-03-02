@@ -54,7 +54,7 @@ public class RemoteStorageService {
   public List<Configuration> getStagingDirectorConfigurations(String tenantId, String okapiToken) {
     List<Configuration> stagingDirectorConfigurations = new ArrayList<>();
     remoteStorageClient.getStorageConfigurations(tenantId, okapiToken)
-      .getConfigurations()
+      .getResult()
       .forEach(configuration -> {
         configuration.setTenantId(tenantId);
         if (STAGING_DIRECTOR_NAME.equals(configuration.getProviderName())) {

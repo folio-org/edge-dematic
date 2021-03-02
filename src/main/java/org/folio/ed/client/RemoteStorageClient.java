@@ -4,7 +4,7 @@ import static org.folio.spring.integration.XOkapiHeaders.TENANT;
 import static org.folio.spring.integration.XOkapiHeaders.TOKEN;
 
 import org.folio.ed.domain.dto.AccessionQueueRecord;
-import org.folio.ed.domain.dto.Configurations;
+import org.folio.ed.domain.dto.Configuration;
 import org.folio.ed.domain.dto.ResultList;
 import org.folio.ed.domain.dto.RetrievalQueueRecord;
 import org.folio.ed.domain.request.ItemBarcodeRequest;
@@ -44,5 +44,5 @@ public interface RemoteStorageClient {
     @RequestHeader(TENANT) String tenantId, @RequestHeader(TOKEN) String okapiToken);
 
   @GetMapping("/configurations")
-  Configurations getStorageConfigurations(@RequestHeader(TENANT) String tenantId, @RequestHeader(TOKEN) String okapiToken);
+  ResultList<Configuration> getStorageConfigurations(@RequestHeader(TENANT) String tenantId, @RequestHeader(TOKEN) String okapiToken);
 }

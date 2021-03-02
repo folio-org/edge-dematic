@@ -23,7 +23,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import lombok.extern.log4j.Log4j2;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource("classpath:application-test.yml")
+@TestPropertySource(value = "classpath:application-test.yml", properties = "app.scheduling.enable=false")
 @Log4j2
 public class TestBase {
 
