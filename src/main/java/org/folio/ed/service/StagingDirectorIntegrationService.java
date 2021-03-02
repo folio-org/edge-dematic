@@ -38,11 +38,17 @@ public class StagingDirectorIntegrationService {
   private final PrimaryChannelHandler primaryChannelHandler;
   private final FeedbackChannelHandler feedbackChannelHandler;
   private final StagingDirectorSerializerDeserializer serializerDeserializer;
+  private final SecurityManagerService sms;
 
   @Scheduled(fixedDelayString = "${configurations.update.timeframe}")
   public void updateIntegrationFlows() {
     removeExistingFlows();
-    remoteStorageService.getStagingDirectorConfigurations().forEach(this::createFlows);
+    var tenantsUsersMap = sms.getStagingDirectorTenantsUsers();
+    for (String tenantId : tenantsUsersMap.keySet()) {
+      for (Configuration configuration : remoteStorageService.getStagingDirectorConfigurations(tenantId, sms.getStagingDirectorConnectionParameters(tenantId).getOkapiToken())) {
+        createFlows(configuration);
+      }
+    }
   }
 
   private void createFlows(Configuration configuration) {
@@ -61,23 +67,25 @@ public class StagingDirectorIntegrationService {
     });
   }
 
-  public IntegrationFlowContext.IntegrationFlowRegistration registerPrimaryChannelOutboundGateway(Configuration configuration) {
+  public IntegrationFlowContext.IntegrationFlowRegistration registerPrimaryChannelOutboundGateway(
+    Configuration configuration) {
     return integrationFlowContext
       .registration(IntegrationFlows
         .from(configuration.getName() + POLLER_CHANNEL_POSTFIX)
-        .<String>handle((p, h) -> primaryChannelHandler.handle(p, configuration.getId()))
+        .<String>handle((p, h) -> primaryChannelHandler.handle(p, configuration))
         .handle(Tcp
           .outboundGateway(Tcp
             .netClient(resolveAddress(configuration.getUrl()), resolvePort(configuration.getUrl()))
             .soTimeout(responseTimeout)
             .serializer(serializerDeserializer)
             .deserializer(serializerDeserializer)))
-        .<String>handle((p, h) -> primaryChannelHandler.handle(p, configuration.getId()))
+        .<String>handle((p, h) -> primaryChannelHandler.handle(p, configuration))
         .get())
       .register();
   }
 
-  public IntegrationFlowContext.IntegrationFlowRegistration registerPrimaryChannelHeartbeatPoller(Configuration configuration) {
+  public IntegrationFlowContext.IntegrationFlowRegistration registerPrimaryChannelHeartbeatPoller(
+    Configuration configuration) {
     return integrationFlowContext
       .registration(IntegrationFlows
         .from(StagingDirectorMessageHelper::buildHeartbeatMessage,
@@ -87,10 +95,15 @@ public class StagingDirectorIntegrationService {
       .register();
   }
 
-  public IntegrationFlowContext.IntegrationFlowRegistration registerPrimaryChannelAccessionPoller(Configuration configuration) {
+  public IntegrationFlowContext.IntegrationFlowRegistration registerPrimaryChannelAccessionPoller(
+    Configuration configuration) {
     return integrationFlowContext
       .registration(IntegrationFlows
-        .from(() -> remoteStorageService.getAccessionQueueRecords(configuration.getId()),
+        .from(() -> {
+            var connectionSystemParameters = sms.getStagingDirectorConnectionParameters(configuration.getTenantId());
+            return remoteStorageService.getAccessionQueueRecords(configuration.getId(), connectionSystemParameters.getTenantId(),
+              connectionSystemParameters.getOkapiToken());
+          },
           p -> p.poller(Pollers.fixedDelay(resolvePollingTimeFrame(configuration.getAccessionDelay(),
             configuration.getAccessionTimeUnit()))))
         .split()
@@ -103,7 +116,8 @@ public class StagingDirectorIntegrationService {
   public IntegrationFlowContext.IntegrationFlowRegistration registerPrimaryChannelRetrievalPoller(Configuration configuration) {
     return integrationFlowContext
       .registration(IntegrationFlows
-        .from(() -> remoteStorageService.getRetrievalQueueRecords(configuration.getId()),
+        .from(() -> remoteStorageService.getRetrievalQueueRecords(configuration.getId(), configuration.getTenantId(),
+          sms.getStagingDirectorConnectionParameters(configuration.getTenantId()).getOkapiToken()),
           p -> p.poller(Pollers.fixedDelay(resolvePollingTimeFrame(configuration.getAccessionDelay(),
             configuration.getAccessionTimeUnit()))))
         .split()
@@ -134,7 +148,7 @@ public class StagingDirectorIntegrationService {
               .deserializer(serializerDeserializer))
           .clientMode(true))
         .channel(configuration.getName() + FEEDBACK_CHANNEL_POSTFIX)
-        .<String>handle((p, h) -> statusChannelHandler.handle(p, configuration.getId()))
+        .<String>handle((p, h) -> statusChannelHandler.handle(p, configuration))
         .get())
       .register();
   }

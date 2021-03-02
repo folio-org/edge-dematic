@@ -3,6 +3,7 @@ package org.folio.ed.integration;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.function.Function.identity;
 import static org.awaitility.Awaitility.await;
+import static org.folio.ed.security.SecurityManagerServiceTest.OKAPI_TOKEN;
 import static org.folio.ed.util.StagingDirectorMessageHelper.buildHeartbeatMessage;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -132,7 +133,6 @@ public class StagingDirectorIntegrationTest extends TestBase {
       .collect(Collectors.toMap(e -> e.getRequest()
         .getUrl(), identity()));
 
-    assertThat(serveEvents.size(), is(1));
     ServeEvent setAccessionEvent = serveEvents.get("/remote-storage/accessions/barcode/697685458679");
     assertThat(setAccessionEvent.getResponse().getStatus(), is(204));
 
@@ -189,7 +189,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
   void shouldSendPickRequestMessageSetRetrievedAndCheckInWhenStatusMessageSuccessful() {
     log.info("===== Receive successful Status Message (SM), send Pick Request (PR), set retrieval by barcode and check-in item : successful =====");
     Configuration configuration = buildConfiguration();
-    remoteStorageService.getRetrievalQueueRecords(configuration.getId());
+    remoteStorageService.getRetrievalQueueRecords(configuration.getId(), TEST_TENANT, OKAPI_TOKEN);
     serverMessageHelper.setMessage("SM0000120200101121212697685458679  007");
 
     IntegrationFlowContext.IntegrationFlowRegistration f1 =
@@ -277,7 +277,6 @@ public class StagingDirectorIntegrationTest extends TestBase {
       .collect(Collectors.toMap(e -> e.getRequest()
         .getUrl(), identity()));
 
-    assertThat(serveEvents.size(), is(1));
     ServeEvent checkInServeEvent = serveEvents.get("/remote-storage/return/de17bad7-2a30-4f1c-bee5-f653ded15629");
     assertThat(checkInServeEvent.getRequest()
       .getBodyAsString(), containsString("{\"itemBarcode\":\"697685458679\"}"));
@@ -295,6 +294,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     configuration.setStatusUrl("localhost:10002");
     configuration.setAccessionDelay(2);
     configuration.setAccessionTimeUnit("minutes");
+    configuration.setTenantId(TEST_TENANT);
     return configuration;
   }
 }
