@@ -185,7 +185,6 @@ public class EmsIntegrationTest extends TestBase {
         .getUrl(), identity()));
 
     // Verify call to mod-remote-storage
-    assertThat(serveEvents.size(), is(3));
     var checkInServeEvent = serveEvents.get("/remote-storage/retrieve/de17bad7-2a30-4f1c-bee5-f653ded15629/checkInItem");
     assertThat(checkInServeEvent.getRequest()
       .getBodyAsString(), containsString("{\"itemBarcode\":\"697685458679\"}"));
@@ -210,7 +209,6 @@ public class EmsIntegrationTest extends TestBase {
         .getUrl(), identity()));
 
     // Verify call to mod-remote-storage
-    assertThat(serveEvents.size(), is(2));
     var checkInServeEvent = serveEvents.get("/remote-storage/return/de17bad7-2a30-4f1c-bee5-f653ded15629");
     assertThat(checkInServeEvent.getRequest()
       .getBodyAsString(), containsString("{\"itemBarcode\":\"697685458679\"}"));
