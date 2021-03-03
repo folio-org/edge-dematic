@@ -32,7 +32,7 @@ public class StatusChannelHandler {
       remoteStorageService.setAccessionedAsync(extractBarcode(payload), tenantId,
         sms.getStagingDirectorConnectionParameters(tenantId)
           .getOkapiToken());
-    } else if ((resolveMessageType(payload) == ITEM_RETURNED) && (extractErrorCode(payload) == SUCCESS)) {
+    } else if (resolveMessageType(payload) == ITEM_RETURNED) {
       remoteStorageService.returnItemByBarcode(configuration.getId(), extractBarcode(payload), tenantId,
         sms.getStagingDirectorConnectionParameters(tenantId)
           .getOkapiToken());

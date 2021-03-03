@@ -41,7 +41,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
   private static final Pattern TRANSACTION_RESPONSE_PATTERN = Pattern.compile("TR\\d{19}000");
 
   @Autowired
-  private StagingDirectorIntegrationService flowsService;
+  private StagingDirectorIntegrationService integrationService;
 
   @Autowired
   private IntegrationFlowContext integrationFlowContext;
@@ -71,8 +71,8 @@ public class StagingDirectorIntegrationTest extends TestBase {
     log.info("===== Send Heartbeat (HM) and receive response (TR): successful =====");
     Configuration configuration = buildConfiguration();
 
-    flowsService.registerPrimaryChannelOutboundGateway(configuration);
-    flowsService.registerPrimaryChannelHeartbeatPoller(configuration);
+    integrationService.registerPrimaryChannelOutboundGateway(configuration);
+    integrationService.registerPrimaryChannelHeartbeatPoller(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(serverMessageHandler).handle(matches(HEARTBEAT_PATTERN), any());
@@ -84,7 +84,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
   void shouldReceiveHeartbeatMessageViaStatusChannelAndSendResponse() {
     log.info("===== Receive Heartbeat (HM) and send response (TR) : successful =====");
     serverMessageHelper.setMessage(buildHeartbeatMessage());
-    flowsService.registerStatusChannelFlow(buildConfiguration());
+    integrationService.registerStatusChannelFlow(buildConfiguration());
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(statusChannelHandler).handle(matches(HEARTBEAT_PATTERN), any());
@@ -97,8 +97,8 @@ public class StagingDirectorIntegrationTest extends TestBase {
     log.info("===== Get accession queue records and send Inventory Add (IA) : successful =====");
     Configuration configuration = buildConfiguration();
 
-    flowsService.registerPrimaryChannelOutboundGateway(configuration);
-    flowsService.registerPrimaryChannelAccessionPoller(configuration);
+    integrationService.registerPrimaryChannelOutboundGateway(configuration);
+    integrationService.registerPrimaryChannelAccessionPoller(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(serverMessageHandler)
@@ -113,8 +113,8 @@ public class StagingDirectorIntegrationTest extends TestBase {
     serverMessageHelper.setMessage("IC0000120200101121212697685458679  000");
     Configuration configuration = buildConfiguration();
 
-    flowsService.registerFeedbackChannelListener(configuration);
-    flowsService.registerStatusChannelFlow(configuration);
+    integrationService.registerFeedbackChannelListener(configuration);
+    integrationService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() ->
       verify(serverMessageHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any()));
@@ -134,8 +134,8 @@ public class StagingDirectorIntegrationTest extends TestBase {
     serverMessageHelper.setMessage("IC0000120200101121212697685458679  008");
     Configuration configuration = buildConfiguration();
 
-    flowsService.registerFeedbackChannelListener(configuration);
-    flowsService.registerStatusChannelFlow(configuration);
+    integrationService.registerFeedbackChannelListener(configuration);
+    integrationService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() ->
       verify(serverMessageHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any()));
@@ -154,8 +154,8 @@ public class StagingDirectorIntegrationTest extends TestBase {
     log.info("===== Get retrieval queue records and send Status Check (SC) : successful =====");
     Configuration configuration = buildConfiguration();
 
-    flowsService.registerPrimaryChannelOutboundGateway(configuration);
-    flowsService.registerPrimaryChannelRetrievalPoller(configuration);
+    integrationService.registerPrimaryChannelOutboundGateway(configuration);
+    integrationService.registerPrimaryChannelRetrievalPoller(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(serverMessageHandler).handle(matches("SC\\d{19}697685458679\\s{2}"), any());
@@ -170,9 +170,9 @@ public class StagingDirectorIntegrationTest extends TestBase {
     remoteStorageService.getRetrievalQueueRecords(configuration.getId(), TEST_TENANT, OKAPI_TOKEN);
     serverMessageHelper.setMessage("SM0000120200101121212697685458679  007");
 
-    flowsService.registerFeedbackChannelListener(configuration);
-    flowsService.registerPrimaryChannelOutboundGateway(configuration);
-    flowsService.registerStatusChannelFlow(configuration);
+    integrationService.registerFeedbackChannelListener(configuration);
+    integrationService.registerPrimaryChannelOutboundGateway(configuration);
+    integrationService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
         verify(statusChannelHandler).handle(matches("SM\\d{19}697685458679\\s{2}007"), any());
@@ -202,9 +202,9 @@ public class StagingDirectorIntegrationTest extends TestBase {
     Configuration configuration = buildConfiguration();
     serverMessageHelper.setMessage("SM0000120200101121212697685458679  010");
 
-    flowsService.registerFeedbackChannelListener(configuration);
-    flowsService.registerPrimaryChannelOutboundGateway(configuration);
-    flowsService.registerStatusChannelFlow(configuration);
+    integrationService.registerFeedbackChannelListener(configuration);
+    integrationService.registerPrimaryChannelOutboundGateway(configuration);
+    integrationService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(statusChannelHandler).handle(matches("SM\\d{19}697685458679\\s{2}010"), any());
@@ -226,8 +226,8 @@ public class StagingDirectorIntegrationTest extends TestBase {
     serverMessageHelper.setMessage("IR0000120200101121212697685458679  000");
     Configuration configuration = buildConfiguration();
 
-    flowsService.registerFeedbackChannelListener(configuration);
-    flowsService.registerStatusChannelFlow(configuration);
+    integrationService.registerFeedbackChannelListener(configuration);
+    integrationService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(statusChannelHandler).handle(matches("IR\\d{19}697685458679  000"), any());
