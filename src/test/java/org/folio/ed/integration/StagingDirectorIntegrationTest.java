@@ -23,6 +23,7 @@ import org.folio.ed.config.MockServerConfig;
 import org.folio.ed.support.ServerMessageHelper;
 import org.folio.ed.handler.PrimaryChannelHandler;
 import org.folio.ed.handler.StatusChannelHandler;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -60,38 +61,35 @@ public class StagingDirectorIntegrationTest extends TestBase {
   @SpyBean
   private ServerMessageHandler serverMessageHandler;
 
+  @BeforeEach
+  public void clearIntegrationContext() {
+    integrationFlowContext.getRegistry().keySet().forEach(k -> integrationFlowContext.remove(k));
+  }
+
   @Test
   void shouldSendHeartbeatMessageViaPrimaryChannelAndReceiveServerResponse() {
     log.info("===== Send Heartbeat (HM) and receive response (TR): successful =====");
     Configuration configuration = buildConfiguration();
 
-    IntegrationFlowContext.IntegrationFlowRegistration f1 =
-      flowsService.registerPrimaryChannelOutboundGateway(configuration);
-    IntegrationFlowContext.IntegrationFlowRegistration f2 =
-      flowsService.registerPrimaryChannelHeartbeatPoller(configuration);
+    flowsService.registerPrimaryChannelOutboundGateway(configuration);
+    flowsService.registerPrimaryChannelHeartbeatPoller(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(serverMessageHandler).handle(matches(HEARTBEAT_PATTERN), any());
       verify(primaryChannelHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any());
     });
-
-    integrationFlowContext.remove(f1.getId());
-    integrationFlowContext.remove(f2.getId());
   }
 
   @Test
   void shouldReceiveHeartbeatMessageViaStatusChannelAndSendResponse() {
     log.info("===== Receive Heartbeat (HM) and send response (TR) : successful =====");
     serverMessageHelper.setMessage(buildHeartbeatMessage());
-    IntegrationFlowContext.IntegrationFlowRegistration f1 =
-      flowsService.registerStatusChannelFlow(buildConfiguration());
+    flowsService.registerStatusChannelFlow(buildConfiguration());
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(statusChannelHandler).handle(matches(HEARTBEAT_PATTERN), any());
       verify(serverMessageHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any());
     });
-
-    integrationFlowContext.remove(f1.getId());
   }
 
   @Test
@@ -99,19 +97,14 @@ public class StagingDirectorIntegrationTest extends TestBase {
     log.info("===== Get accession queue records and send Inventory Add (IA) : successful =====");
     Configuration configuration = buildConfiguration();
 
-    IntegrationFlowContext.IntegrationFlowRegistration f1 =
-      flowsService.registerPrimaryChannelOutboundGateway(configuration);
-    IntegrationFlowContext.IntegrationFlowRegistration f2 =
-      flowsService.registerPrimaryChannelAccessionPoller(configuration);
+    flowsService.registerPrimaryChannelOutboundGateway(configuration);
+    flowsService.registerPrimaryChannelAccessionPoller(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(serverMessageHandler)
         .handle(matches("IA\\d{19}697685458679\\s{2}some-callnumber\\s{35}Nod\\s{32}Barnes, Adrian\\s{21}"), any());
       verify(primaryChannelHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any());
     });
-
-    integrationFlowContext.remove(f1.getId());
-    integrationFlowContext.remove(f2.getId());
   }
 
   @Test
@@ -120,10 +113,8 @@ public class StagingDirectorIntegrationTest extends TestBase {
     serverMessageHelper.setMessage("IC0000120200101121212697685458679  000");
     Configuration configuration = buildConfiguration();
 
-    IntegrationFlowContext.IntegrationFlowRegistration f1 =
-      flowsService.registerFeedbackChannelListener(configuration);
-    IntegrationFlowContext.IntegrationFlowRegistration f2 =
-      flowsService.registerStatusChannelFlow(configuration);
+    flowsService.registerFeedbackChannelListener(configuration);
+    flowsService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() ->
       verify(serverMessageHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any()));
@@ -135,9 +126,6 @@ public class StagingDirectorIntegrationTest extends TestBase {
 
     ServeEvent setAccessionEvent = serveEvents.get("/remote-storage/accessions/barcode/697685458679");
     assertThat(setAccessionEvent.getResponse().getStatus(), is(204));
-
-    integrationFlowContext.remove(f1.getId());
-    integrationFlowContext.remove(f2.getId());
   }
 
   @Test
@@ -146,10 +134,8 @@ public class StagingDirectorIntegrationTest extends TestBase {
     serverMessageHelper.setMessage("IC0000120200101121212697685458679  008");
     Configuration configuration = buildConfiguration();
 
-    IntegrationFlowContext.IntegrationFlowRegistration f1 =
-      flowsService.registerFeedbackChannelListener(configuration);
-    IntegrationFlowContext.IntegrationFlowRegistration f2 =
-      flowsService.registerStatusChannelFlow(configuration);
+    flowsService.registerFeedbackChannelListener(configuration);
+    flowsService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() ->
       verify(serverMessageHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any()));
@@ -161,9 +147,6 @@ public class StagingDirectorIntegrationTest extends TestBase {
 
     // no requests expected
     assertThat(serveEvents.size(), is(0));
-
-    integrationFlowContext.remove(f1.getId());
-    integrationFlowContext.remove(f2.getId());
   }
 
   @Test
@@ -171,18 +154,13 @@ public class StagingDirectorIntegrationTest extends TestBase {
     log.info("===== Get retrieval queue records and send Status Check (SC) : successful =====");
     Configuration configuration = buildConfiguration();
 
-    IntegrationFlowContext.IntegrationFlowRegistration f1 =
-      flowsService.registerPrimaryChannelOutboundGateway(configuration);
-    IntegrationFlowContext.IntegrationFlowRegistration f2 =
-      flowsService.registerPrimaryChannelRetrievalPoller(configuration);
+    flowsService.registerPrimaryChannelOutboundGateway(configuration);
+    flowsService.registerPrimaryChannelRetrievalPoller(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(serverMessageHandler).handle(matches("SC\\d{19}697685458679\\s{2}"), any());
       verify(primaryChannelHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any());
     });
-
-    integrationFlowContext.remove(f1.getId());
-    integrationFlowContext.remove(f2.getId());
   }
 
   @Test
@@ -192,12 +170,9 @@ public class StagingDirectorIntegrationTest extends TestBase {
     remoteStorageService.getRetrievalQueueRecords(configuration.getId(), TEST_TENANT, OKAPI_TOKEN);
     serverMessageHelper.setMessage("SM0000120200101121212697685458679  007");
 
-    IntegrationFlowContext.IntegrationFlowRegistration f1 =
-      flowsService.registerFeedbackChannelListener(configuration);
-    IntegrationFlowContext.IntegrationFlowRegistration f2 =
-      flowsService.registerPrimaryChannelOutboundGateway(configuration);
-    IntegrationFlowContext.IntegrationFlowRegistration f3 =
-      flowsService.registerStatusChannelFlow(configuration);
+    flowsService.registerFeedbackChannelListener(configuration);
+    flowsService.registerPrimaryChannelOutboundGateway(configuration);
+    flowsService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
         verify(statusChannelHandler).handle(matches("SM\\d{19}697685458679\\s{2}007"), any());
@@ -219,10 +194,6 @@ public class StagingDirectorIntegrationTest extends TestBase {
     serveEvent = serveEvents.get("/remote-storage/retrieve/de17bad7-2a30-4f1c-bee5-f653ded15629/checkInItem");
     assertThat(serveEvent.getRequest()
       .getBodyAsString(), containsString("{\"itemBarcode\":\"697685458679\"}"));
-
-    integrationFlowContext.remove(f1.getId());
-    integrationFlowContext.remove(f2.getId());
-    integrationFlowContext.remove(f3.getId());
   }
 
   @Test
@@ -231,12 +202,9 @@ public class StagingDirectorIntegrationTest extends TestBase {
     Configuration configuration = buildConfiguration();
     serverMessageHelper.setMessage("SM0000120200101121212697685458679  010");
 
-    IntegrationFlowContext.IntegrationFlowRegistration f1 =
-      flowsService.registerFeedbackChannelListener(configuration);
-    IntegrationFlowContext.IntegrationFlowRegistration f2 =
-      flowsService.registerPrimaryChannelOutboundGateway(configuration);
-    IntegrationFlowContext.IntegrationFlowRegistration f3 =
-      flowsService.registerStatusChannelFlow(configuration);
+    flowsService.registerFeedbackChannelListener(configuration);
+    flowsService.registerPrimaryChannelOutboundGateway(configuration);
+    flowsService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(statusChannelHandler).handle(matches("SM\\d{19}697685458679\\s{2}010"), any());
@@ -250,10 +218,6 @@ public class StagingDirectorIntegrationTest extends TestBase {
 
     // no requests expected
     assertThat(serveEvents.size(), is(0));
-
-    integrationFlowContext.remove(f1.getId());
-    integrationFlowContext.remove(f2.getId());
-    integrationFlowContext.remove(f3.getId());
   }
 
   @Test
@@ -262,10 +226,8 @@ public class StagingDirectorIntegrationTest extends TestBase {
     serverMessageHelper.setMessage("IR0000120200101121212697685458679  000");
     Configuration configuration = buildConfiguration();
 
-    IntegrationFlowContext.IntegrationFlowRegistration f1 =
-      flowsService.registerFeedbackChannelListener(configuration);
-    IntegrationFlowContext.IntegrationFlowRegistration f2 =
-      flowsService.registerStatusChannelFlow(configuration);
+    flowsService.registerFeedbackChannelListener(configuration);
+    flowsService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(statusChannelHandler).handle(matches("IR\\d{19}697685458679  000"), any());
@@ -280,9 +242,6 @@ public class StagingDirectorIntegrationTest extends TestBase {
     ServeEvent checkInServeEvent = serveEvents.get("/remote-storage/return/de17bad7-2a30-4f1c-bee5-f653ded15629");
     assertThat(checkInServeEvent.getRequest()
       .getBodyAsString(), containsString("{\"itemBarcode\":\"697685458679\"}"));
-
-    integrationFlowContext.remove(f1.getId());
-    integrationFlowContext.remove(f2.getId());
   }
 
   private Configuration buildConfiguration() {
