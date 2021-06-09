@@ -33,9 +33,29 @@ This user should work as ordinary edge institutional user with the only one diff
 - his username and salt name are - stagingDirector.
 3. User `stagingDirector` with password `{{password}}` and remote-storage.all permissions should be created on FOLIO. After that apikey can
 be generated for making calls to Edge Dematic API.
-   
+
+##### Create Dematic StagingDirector configuration
+1. Log in to Folio, go to "Settings" -> "Remote storage" -> "Configurations", click "New" button.
+2. Enter General information settings:
+* Select "Dematic StagingDirector" in Provider name box
+* Enter Remote storage name
+* Enter IP address and port in URL (for primary channel) and Status URL (for status channel). Address and port separated by colon (no whitespaces or other symbols), for example `192.168.1.1:1234`
+3. Set Data synchronization schedule. This setting defines timeframe to scan accession and retrieval queues and data exchange with provider.
+4. Click "Save & close" button
+
+*Note: Folio updates Dematic StagingDirector remote storage configuration settings each 60 minutes, so it can take up to one hour before new or edited Remote storage configuration settings will be applied.*   
+
 #### Dematic EMS setup
-The deployment information above is related only to Dematic StagingDirector edge user. For Dematic EMS another edge user (with corresponding API_KEY) should be created following the standard process for edge users creation. 
+The deployment information above is related only to Dematic StagingDirector edge user. For Dematic EMS another edge user (with corresponding API_KEY) should be created following the standard process for edge users creation.
+
+##### Create Dematic EMS configuration
+1. Log in to Folio, go to "Settings" -> "Remote storage" -> "Configurations", click "New" button.
+2. Enter General information settings:
+* Select "Dematic EMS" in Provider name box
+* Enter Remote storage name
+3. Click "Save & close" button
+
+*Note: Since Dematic EMS flows initiated on provider side, all other settings can be omitted.*
 
 ### Required Permissions
 The following permissions should be granted to institutional users (as well as StagingDirectortenants) in order to use this edge API:
