@@ -8,6 +8,24 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 ## Introduction
 The purpose of this edge API is to bridge the gap between Dematic remote storage provider and FOLIO.
 
+There are two modules involved in Dematic workflow: mod-remote-storage, which interacts with other Folio modules and edge-dematic, which acts as a gate between Dematic and Folio:
+
+`FOLIO <–> mod-remote-storage <–> edge-dematic <–> Dematic`
+
+Edge-dematic supports two separate ways of communication 
+* HTTP endpoints for Dematic EMS 
+* TCP/IP sockets for Dematic StagingDirector. 
+
+Dematic EMS interacts with Folio via HTTP endpoints (see [API Details](#api-details)). All flows – accession, retrieve and return – are initiated by Dematic. For each flow Dematic EMS polls appropriate edge-dematic endpoint. Each request must contain apikey as a query parameter: `/asrService/lookupNewASRItems/aaa-bbb-ccc?apikey=someApiKey`
+
+Dematic StagingDirector (hereinafter SD) requires two TCP/IP sockets (channels):
+* primary channel for sending requests to SD
+* status channel for responses from SD 
+
+Both connections initiated and maintained on Folio side by `edge-dematic` module. 
+
+Accession and retrieval flows initiated by Folio – at the configurable interval edge-dematic checks two queues: accession queue and retrieval queue (filled by `mod-remote-storage` when circulation events occur). If new records are present, module sends requests to SD via primary channel. SD then sends responses or, in case of item return, a return message via status channel.
+
 ## Additional information
 
 ### API Details
