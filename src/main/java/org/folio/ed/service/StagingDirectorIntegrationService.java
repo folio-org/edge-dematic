@@ -172,11 +172,11 @@ public class StagingDirectorIntegrationService {
 
   @EventListener(TcpConnectionOpenEvent.class)
   public void handleConnectionOpenEvent(TcpConnectionOpenEvent event) {
-    LOGGER.info("Open connection: {}", event.toString());
+    LOGGER.info("Open connection: {}", event);
   }
 
   @EventListener(TcpConnectionCloseEvent.class)
   public void handleConnectionCloseEvent(TcpConnectionCloseEvent event) {
-    LOGGER.info("Close connection: {}", event.toString());
+    LOGGER.info("Close connection: {}", event);
   }
 }
