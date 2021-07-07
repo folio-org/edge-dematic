@@ -103,9 +103,6 @@ public class StagingDirectorIntegrationService {
   }
 
   private String buildHeartbeatMessageIfNeeded(Configuration configuration) {
-    LOGGER.debug("time: {}", remoteStorageService.getLastMessageTime(configuration.getId()));
-
-//    LOGGER.debug("next message should be sent at: {}, now: {}", nextMessageTime, LocalDateTime.now());
     if (isNull(remoteStorageService.getLastMessageTime(configuration.getId())) ||
       remoteStorageService.getLastMessageTime(configuration.getId()).plusSeconds(heartbeatTimeframe).isBefore(LocalDateTime.now())) {
       return StagingDirectorMessageHelper.buildHeartbeatMessage();

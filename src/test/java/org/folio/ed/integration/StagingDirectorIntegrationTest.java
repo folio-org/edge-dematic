@@ -92,9 +92,8 @@ public class StagingDirectorIntegrationTest extends TestBase {
     serverMessageHelper.setMessage(buildHeartbeatMessage());
     integrationService.registerStatusChannelFlow(buildConfiguration());
 
-    await().atMost(1, SECONDS).untilAsserted(() -> {
-      verify(statusChannelHandler).handle(matches(HEARTBEAT_PATTERN), any());
-    });
+    await().atMost(1, SECONDS).untilAsserted(() ->
+      verify(statusChannelHandler).handle(matches(HEARTBEAT_PATTERN), any()));
   }
 
   @Test
