@@ -94,7 +94,6 @@ public class StagingDirectorIntegrationTest extends TestBase {
 
     await().atMost(1, SECONDS).untilAsserted(() -> {
       verify(statusChannelHandler).handle(matches(HEARTBEAT_PATTERN), any());
-      verify(serverMessageHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any());
     });
   }
 
