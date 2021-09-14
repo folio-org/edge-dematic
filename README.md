@@ -39,6 +39,13 @@ API provides the following URLs for working with remote storage configurations:
 | POST | /asrService/asr/updateASRItemStatusAvailable/{remoteStorageConfigurationId} | The API for return |
 
 ### Deployment information
+
+#### Rancher
+1. new user must be created with the name : stagingDirector
+2. add this user to ephemeral properties file in rancher
+3. modify java option to include this user
+4. check that mod-remote-storage is working properly
+
 #### Dematic StagingDirector setup
 1. Dematic StagingDirector connection should be established from the Dematic edge Folio module. Therefore Dematic edge module 
 needs to know the name of all the tenants, which has StagingDirector connection. For the ephemeral configuration these names locate in the
