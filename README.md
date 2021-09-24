@@ -39,28 +39,38 @@ API provides the following URLs for working with remote storage configurations:
 | POST | /asrService/asr/updateASRItemStatusAvailable/{remoteStorageConfigurationId} | The API for return |
 
 ### Deployment information
+
+#### Rancher
+1. Check that mod-remote-storage has been installed and has been registered to okapi.
+2. Create a new user named `stagingDirector` in FOLIO. You may also use `diku_admin` for testing and avoid this step.
+3. Create a secret in the rancher cluster. Make the key of this secret `ephemeral.properties` and the value similar to `secureStore.type=Ephemeral tenants=diku diku=diku_admin,admin,stagingDirector`.
+4. Add this secret as a volume mount to the workload for the edge module container. Set the mount point of this volume to `\etc\edge`.
+5. Set the `JAVA_OPTIONS` environment variable for the workload to something similar to `-Dsecure_store_props=/etc/edge/ephemeral.properties -Dokapi_url=http://okapi:9130 -Dlog_level=DEBUG -Dstaging_director_client=diku_admin`. 
+6. Redeploy the container. This will make the container aware of the new secret and volume mount.
+
+##### Other rancher considerations
+If you are deploying using a FOLIO helm chart, you may want to take adavantage of overriding the chart's yml with answer keys and values to enable the ingress. Here is an example:
+
+| Key | Value |
+|---|---|
+|ingress.annotations.external-dns\.alpha\.kubernetes\.io/target|f2b6996c-kubesystem-albing-accc-1096161577.us-west-2.elb.amazonaws.com|
+|ingress.enabled|true|
+|ingress.hosts[0].host|core-platform-edge-orders.ci.folio.org|
+|ingress.hosts[0].paths[0]|/|
+
 #### Dematic StagingDirector setup
-1. Dematic StagingDirector connection should be established from the Dematic edge Folio module. Therefore Dematic edge module 
-needs to know the name of all the tenants, which has StagingDirector connection. For the ephemeral configuration these names locate in the
-`ephemeral.properties` (key `tenants`). In order to provide it before the deployment the list of tenant names (e.g. ids) should be put to AWS parameters store (as String). The tenant names list separated by 
-coma (e.g. diku, someothertenantname) should be stored in AWS param store in the variable with 
-key: `stagingDirector_tenants` by default or could be provided its own key through `staging_director_tenants` parameter of starting module. 
-2. For each tenant using StagingDirector the corresponding user should be added 
-to the AWS parameter store with key in the following format `{{username}}_{{tenant}}_{{username}}` (where salt and username are the same - `{{username}}`) with value of corresponding `{{password}}` (as Secured String). 
-This user should work as ordinary edge institutional user with the only one difference 
-- his username and salt name are - `{{username}}`. 
- By default the value of `{{username}}` is `stagingDirector`. It could be changed through `staging_director_client` parameter of starting module.
-3. User `{{username}}` with password `{{password}}` and remote-storage.all permissions should be created on FOLIO. After that apikey can
-be generated for making calls to Edge Dematic API.
+1. Dematic StagingDirector connection should be established from the Dematic edge Folio module. Therefore Dematic edge module needs to know the name of all the tenants, which has StagingDirector connection. For the ephemeral configuration these names locate in the `ephemeral.properties` (key `tenants`). In order to provide it before the deployment the list of tenant names (e.g. ids) should be put to AWS parameters store (as String). The tenant names list separated by coma (e.g. diku, someothertenantname) should be stored in AWS param store in the variable with key: `stagingDirector_tenants` by default or could be provided its own key through `staging_director_tenants` parameter of starting module.
+2. For each tenant using StagingDirector the corresponding user should be added to the AWS parameter store with key in the following format `{{username}}_{{tenant}}_{{username}}` (where salt and username are the same - `{{username}}`) with value of corresponding `{{password}}` (as Secured String). This user should work as ordinary edge institutional user with the only one difference - his username and salt name are - `{{username}}`. By default the value of `{{username}}` is `stagingDirector`. It could be changed through `staging_director_client` parameter of starting module.
+3. User `{{username}}` with password `{{password}}` and remote-storage.all permissions should be created on FOLIO. After that apikey can be generated for making calls to Edge Dematic API.
 
 ##### Create Dematic StagingDirector configuration
 1. Log in to Folio, go to "Settings" -> "Remote storage" -> "Configurations", click "New" button.
 2. Enter General information settings:
 * Select "Dematic StagingDirector" in Provider name box
 * Enter Remote storage name
-* Enter IP address and port in URL (for primary channel) and Status URL (for status channel). Address and port separated by colon (no whitespaces or other symbols), for example `192.168.1.1:1234`
+* Enter IP address and port in URL (for primary channel) and Status URL (for status channel). Address and port separated by colon (no whitespaces or other symbols), for example `192.168.1.1:1234`.
 3. Set Data synchronization schedule. This setting defines timeframe to scan accession and retrieval queues and data exchange with provider.
-4. Click "Save & close" button
+4. Click "Save & close" button.
 
 *Note: Dematic StagingDirector configuration settings applied only upon module startup, so in case of their changes, edge-dematic service must be restarted.*   
 
@@ -72,13 +82,12 @@ The deployment information above is related only to Dematic StagingDirector edge
 2. Enter General information settings:
 * Select "Dematic EMS" in Provider name box
 * Enter Remote storage name
-3. Click "Save & close" button
+3. Click "Save & close" button.
 
 *Note: Since Dematic EMS flows initiated on provider side, all other settings can be omitted.*
 
 ### Required Permissions
-The following permissions should be granted to institutional users (as well as StagingDirectortenants) in order to use this edge API:
-- `remote-storage.all`
+The following permissions should be granted to institutional users (as well as StagingDirectortenants) in order to use this edge API: `remote-storage.all`.
 
 ### Configuration
 Please refer to the [Configuration](https://github.com/folio-org/edge-common/blob/master/README.md#configuration) section in the [edge-common](https://github.com/folio-org/edge-common/blob/master/README.md) documentation to see all available system properties and their default values.
