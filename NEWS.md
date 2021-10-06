@@ -1,4 +1,16 @@
-## 1.3.0 - Unreleased
+## 1.3.1 - Unreleased
+
+## 1.3.0 - Released
+This release includes minor improvements for system user and GET request
+
+[Full Changelog](https://github.com/folio-org/edge-dematic/compare/v1.2.0...v1.3.0)
+
+### Stories
+* [EDGDEMATIC-26](https://issues.folio.org/browse/EDGDEMATIC-26) - Improvement: Making system user configurable
+
+### Bug Fixes
+* [EDGDEMATIC-31](https://issues.folio.org/browse/EDGDEMATIC-31) - GET asrService/asr/lookupNewAsrItems doesn't retrieve new accession queue records
+
 
 ## 1.2.0 - Released
 This release includes minor improvements on deployment process
