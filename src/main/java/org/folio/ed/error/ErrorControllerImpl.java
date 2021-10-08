@@ -30,9 +30,4 @@ public class ErrorControllerImpl implements ErrorController {
       return StringUtils.EMPTY;
     }
   }
-
-  @Override
-  public String getErrorPath() {
-    return null;
-  }
 }

@@ -95,7 +95,7 @@ public class StagingDirectorIntegrationService {
     Configuration configuration) {
     return integrationFlowContext
       .registration(IntegrationFlows
-        .from(() -> buildHeartbeatMessageIfNeeded(configuration),
+        .fromSupplier(() -> buildHeartbeatMessageIfNeeded(configuration),
           p -> p.poller(Pollers.fixedDelay(SECONDS.toMillis(1))))
         .channel(configuration.getName() + POLLER_CHANNEL_POSTFIX)
         .get())
@@ -114,7 +114,7 @@ public class StagingDirectorIntegrationService {
     Configuration configuration) {
     return integrationFlowContext
       .registration(IntegrationFlows
-        .from(() -> {
+        .fromSupplier(() -> {
             var connectionSystemParameters = sms.getStagingDirectorConnectionParameters(configuration.getTenantId());
             return remoteStorageService.getAccessionQueueRecords(configuration.getId(), connectionSystemParameters.getTenantId(),
               connectionSystemParameters.getOkapiToken());
@@ -131,7 +131,7 @@ public class StagingDirectorIntegrationService {
   public IntegrationFlowContext.IntegrationFlowRegistration registerPrimaryChannelRetrievalPoller(Configuration configuration) {
     return integrationFlowContext
       .registration(IntegrationFlows
-        .from(() -> remoteStorageService.getRetrievalQueueRecords(configuration.getId(), configuration.getTenantId(),
+        .fromSupplier(() -> remoteStorageService.getRetrievalQueueRecords(configuration.getId(), configuration.getTenantId(),
           sms.getStagingDirectorConnectionParameters(configuration.getTenantId()).getOkapiToken()),
           p -> p.poller(Pollers.fixedDelay(resolvePollingTimeFrame(configuration.getAccessionDelay(),
             configuration.getAccessionTimeUnit()))))
