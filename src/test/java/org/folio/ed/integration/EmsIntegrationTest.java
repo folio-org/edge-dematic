@@ -240,7 +240,6 @@ public class EmsIntegrationTest extends TestBase {
     var getException = assertThrows(HttpClientErrorException.class,
       () -> get(lookupNewAsrItem + "/c7310e5e-c4be-4d8f-943c-faaa35679aaa", headers, String.class));
     assertThat(getException.getStatusCode(), is(HttpStatus.FORBIDDEN));
-    assertThat(getException.getMessage(), is("403 : [Edge API key not found in the request]"));
   }
 
   @Test
@@ -253,7 +252,6 @@ public class EmsIntegrationTest extends TestBase {
     var postException = assertThrows(HttpClientErrorException.class,
       () -> post(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers, asrItem, String.class));
     assertThat(postException.getStatusCode(), is(HttpStatus.FORBIDDEN));
-    assertThat(postException.getMessage(), is("403 : [Edge API key not found in the request]"));
   }
 
   @Test
@@ -265,7 +263,6 @@ public class EmsIntegrationTest extends TestBase {
     var exception = assertThrows(HttpClientErrorException.class,
       () -> get(lookupNewAsrItem + "/c7310e5e-c4be-4d8f-943c-faaa35679aaa?apikey=" + invalidApiKey, headers, String.class));
     assertThat(exception.getStatusCode(), is(HttpStatus.FORBIDDEN));
-    assertThat(exception.getMessage(), is("403 : [Cannot get system connection properties for: invalid_tenant]"));
   }
 
   @Test
@@ -275,6 +272,5 @@ public class EmsIntegrationTest extends TestBase {
     var exception = assertThrows(HttpClientErrorException.class,
       () -> get(lookupNewAsrItem + "/c7310e5e-c4be-4d8f-943c-faaa35679aaa?apikey=1", headers, String.class));
     assertThat(exception.getStatusCode(), is(HttpStatus.FORBIDDEN));
-    assertThat(exception.getMessage(), is("403 : [Malformed edge api key: 1]"));
   }
 }
