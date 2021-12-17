@@ -1,4 +1,12 @@
-## 1.3.1 - Unreleased
+## 1.4.0 - Unreleased
+
+## 1.3.1 - Released
+This release includes fix for log4j vulnerability
+
+[Full Changelog](https://github.com/folio-org/edge-dematic/compare/v1.3.0...v1.3.1)
+
+### Bug Fixes
+* [EDGDEMATIC-47](https://issues.folio.org/browse/EDGDEMATIC-47) - Kiwi R3 2021 - Log4j vulnerability verification and correction
 
 ## 1.3.0 - Released
 This release includes minor improvements for system user and GET request
