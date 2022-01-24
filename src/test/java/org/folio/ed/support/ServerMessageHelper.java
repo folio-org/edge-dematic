@@ -1,13 +1,16 @@
 package org.folio.ed.support;
 
-public class ServerMessageHelper {
-  private String message;
+import lombok.experimental.UtilityClass;
 
-  public String getMessage() {
+@UtilityClass
+public class ServerMessageHelper {
+  private static String message;
+
+  public static String getMessage() {
     return message;
   }
 
-  public void setMessage(String message) {
-    this.message = message;
+  public static void setMessage(String msg) {
+    message = msg;
   }
 }
