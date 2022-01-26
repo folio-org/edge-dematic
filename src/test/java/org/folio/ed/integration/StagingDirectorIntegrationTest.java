@@ -4,6 +4,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.function.Function.identity;
 import static org.awaitility.Awaitility.await;
 import static org.folio.ed.security.SecurityManagerServiceTest.OKAPI_TOKEN;
+import static org.folio.ed.support.ServerMessageHelper.setMessage;
 import static org.folio.ed.util.StagingDirectorMessageHelper.buildHeartbeatMessage;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -23,7 +24,6 @@ import org.folio.ed.service.StagingDirectorIntegrationService;
 import org.folio.ed.support.ServerMessageHandler;
 import org.folio.ed.domain.dto.Configuration;
 import org.folio.ed.config.MockServerConfig;
-import org.folio.ed.support.ServerMessageHelper;
 import org.folio.ed.handler.PrimaryChannelHandler;
 import org.folio.ed.handler.StatusChannelHandler;
 import org.folio.ed.util.StagingDirectorErrorCodes;
@@ -51,9 +51,6 @@ public class StagingDirectorIntegrationTest extends TestBase {
 
   @Autowired
   private IntegrationFlowContext integrationFlowContext;
-
-  @Autowired
-  private ServerMessageHelper serverMessageHelper;
 
   @SpyBean
   private RemoteStorageService remoteStorageService;
@@ -89,7 +86,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
   @Test
   void shouldReceiveHeartbeatMessageViaStatusChannelAndSendResponse() {
     log.info("===== Receive Heartbeat (HM) and send response (TR) : successful =====");
-    serverMessageHelper.setMessage(buildHeartbeatMessage());
+    setMessage(buildHeartbeatMessage());
     integrationService.registerStatusChannelFlow(buildConfiguration());
 
     await().atMost(1, SECONDS).untilAsserted(() ->
@@ -114,7 +111,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
   @Test
   void shouldSetAccessionedWhenInventoryConfirmSuccessful() {
     log.info("===== Receive successful Inventory Confirm (IC) and set accessioned by barcode : successful =====");
-    serverMessageHelper.setMessage("IC0000120200101121212697685458679  000");
+    setMessage("IC0000120200101121212697685458679  000");
     Configuration configuration = buildConfiguration();
 
     integrationService.registerFeedbackChannelListener(configuration);
@@ -136,7 +133,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
   @EnumSource(value = StagingDirectorErrorCodes.class, names = { "SUCCESS", "INVALID_SKU_FORMAT", "SKU_ALREADY_IN_DATABASE" })
   void shouldSetAccessionedByBarcodeOnInventoryConfirmWithAnyCode(StagingDirectorErrorCodes errorCode) {
     log.info("===== Receive Inventory Confirm (IC) with any code : successful =====");
-    serverMessageHelper.setMessage("IC0000120200101121212item-barcode  " + errorCode.getValue());
+    setMessage("IC0000120200101121212item-barcode  " + errorCode.getValue());
     Configuration configuration = buildConfiguration();
 
     integrationService.registerFeedbackChannelListener(configuration);
@@ -171,7 +168,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     log.info("===== Receive successful Status Message (SM), send Pick Request (PR), set retrieval by barcode and check-in item : successful =====");
     Configuration configuration = buildConfiguration();
     remoteStorageService.getRetrievalQueueRecords(configuration.getId(), TEST_TENANT, OKAPI_TOKEN);
-    serverMessageHelper.setMessage("SM0000120200101121212697685458679  007");
+    setMessage("SM0000120200101121212697685458679  007");
 
     integrationService.registerFeedbackChannelListener(configuration);
     integrationService.registerPrimaryChannelOutboundGateway(configuration);
@@ -199,7 +196,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
   void shouldMarkItemAsMissingOnStatusMessageWithCodeForMissing(StagingDirectorErrorCodes errorCode) {
     log.info("===== Receive rejected Status Message (SM) with code for missing item : successful =====");
     Configuration configuration = buildConfiguration();
-    serverMessageHelper.setMessage("SM0000120200101121212item-barcode  " + errorCode.getValue());
+    setMessage("SM0000120200101121212item-barcode  " + errorCode.getValue());
 
     integrationService.registerFeedbackChannelListener(configuration);
     integrationService.registerPrimaryChannelOutboundGateway(configuration);
@@ -221,7 +218,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
   void shouldSetRetrievalByBarcodeOnStatusMessageWithAnyCode(StagingDirectorErrorCodes errorCode) {
     log.info("===== Receive rejected Status Message (SM) with any code : successful =====");
     Configuration configuration = buildConfiguration();
-    serverMessageHelper.setMessage("SM0000120200101121212item-barcode  " + errorCode.getValue());
+    setMessage("SM0000120200101121212item-barcode  " + errorCode.getValue());
 
     integrationService.registerFeedbackChannelListener(configuration);
     integrationService.registerPrimaryChannelOutboundGateway(configuration);
@@ -240,7 +237,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
   @Test
   void shouldCallReturnItemWhenItemReturnedMessageReceived() {
     log.info("===== Receive Item Returned (IR) and check-in item : successful =====");
-    serverMessageHelper.setMessage("IR0000120200101121212697685458679  000");
+    setMessage("IR0000120200101121212697685458679  000");
     Configuration configuration = buildConfiguration();
 
     integrationService.registerFeedbackChannelListener(configuration);

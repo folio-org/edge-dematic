@@ -1,7 +1,8 @@
 package org.folio.ed.config;
 
+import static org.folio.ed.support.ServerMessageHelper.getMessage;
+
 import org.folio.ed.support.ServerMessageHandler;
-import org.folio.ed.support.ServerMessageHelper;
 import org.folio.ed.util.StagingDirectorSerializerDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,9 +25,6 @@ public class MockServerConfig {
 
   @Value("${mock.server.status.port}")
   private int statusPort;
-
-  @Autowired
-  private ServerMessageHelper serverMessageHelper;
 
   @Autowired
   private StagingDirectorSerializerDeserializer serializerDeserializer;
@@ -65,7 +63,7 @@ public class MockServerConfig {
   @Bean
   public IntegrationFlow statusChannelOutboundFlow() {
     return IntegrationFlows.from(eventsProducer())
-      .transform(e -> MessageBuilder.withPayload(serverMessageHelper.getMessage())
+      .transform(e -> MessageBuilder.withPayload(getMessage())
         .setHeader(IpHeaders.CONNECTION_ID, ((TcpConnectionOpenEvent) e).getConnectionId()).build())
       .handle(Tcp.outboundAdapter(statusChannelFactory()))
       .get();
@@ -82,10 +80,5 @@ public class MockServerConfig {
   @Bean
   public ServerMessageHandler serverMessageHandler() {
     return new ServerMessageHandler();
-  }
-
-  @Bean
-  public ServerMessageHelper serverMessageHelper() {
-    return new ServerMessageHelper();
   }
 }
