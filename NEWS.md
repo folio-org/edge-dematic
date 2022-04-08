@@ -1,5 +1,14 @@
 ## 1.6.0 - Unreleased
 
+## 1.5.1 - Released 
+
+This release was focused on spring-boot-starter-parent upgrade to 2.6.6
+
+[Full Changelog](https://github.com/folio-org/edge-dematic/compare/v1.5.0...v1.5.1)
+
+### Bug Fixes
+* [EDGDEMATIC-64](https://issues.folio.org/browse/EDGDEMATIC-64) - Spring4Shell Lotus (CVE-2022-22965)
+
 ## 1.5.0 - Released
 This release was focused on log4j vulnerability fix and minor improvements
 
