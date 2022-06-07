@@ -1,10 +1,10 @@
 package org.folio.ed.security;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 
-import org.apache.commons.lang.StringUtils;
 import org.folio.ed.TestBase;
 import org.junit.jupiter.api.Test;
 
@@ -34,6 +34,6 @@ public class EdgeSecurityFilterTest extends TestBase {
     var response = get(String.format(INFO_ENDPOINT, edgeDematicPort), getEmptyHeaders(), JsonNode.class);
     assertThat(response.getBody(), notNullValue());
     assertThat(response.getBody()
-      .asText(), equalTo(StringUtils.EMPTY));
+      .asText(), equalTo(EMPTY));
   }
 }
