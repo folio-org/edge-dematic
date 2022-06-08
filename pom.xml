@@ -51,12 +51,6 @@
       <groupId>org.folio</groupId>
       <artifactId>edge-common</artifactId>
       <version>${edge-common.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.mockito</groupId>
-          <artifactId>mockito-all</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
