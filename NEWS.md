@@ -1,4 +1,13 @@
-## 1.6.0 - Unreleased
+## 1.7.0 - Unreleased
+
+## 1.6.0 - Released
+This release includes minor improvements (libraries dependencies cleanup and update)
+
+[Full Changelog](https://github.com/folio-org/edge-dematic/compare/v1.5.0...v1.6.0)
+
+### Technical tasks
+* [EDGDEMATIC-66](https://issues.folio.org/browse/EDGDEMATIC-66) - edge-dematic Spring 2.7 for Morning Glory R2 2022
+* [EDGDEMATIC-60](https://issues.folio.org/browse/EDGDEMATIC-60) - edge-dematic: folio-spring-base v4.1.0 update
 
 ## 1.5.0 - Released
 This release was focused on log4j vulnerability fix and minor improvements
