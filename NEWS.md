@@ -1,5 +1,13 @@
 ## 1.7.0 - Unreleased
 
+## 1.6.1 - Released
+This release includes bug fixes
+
+### Bug Fixes
+* [EDGDEMATIC-70](https://issues.folio.org/browse/EDGDEMATIC-70) - edge-common 4.4.1 fixing disabled SSL in Vert.x WebClient
+
+[Full Changelog](https://github.com/folio-org/edge-dematic/compare/v1.6.0...v1.6.1)
+
 ## 1.6.0 - Released
 This release includes minor improvements (libraries dependencies cleanup and update)
 
