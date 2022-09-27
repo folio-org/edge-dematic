@@ -10,6 +10,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.matches;
@@ -91,6 +92,13 @@ public class StagingDirectorIntegrationTest extends TestBase {
 
     await().atMost(1, SECONDS).untilAsserted(() ->
       verify(statusChannelHandler).handle(matches(HEARTBEAT_PATTERN), any()));
+  }
+
+  @Test
+  void shouldRespondToUnknownMessagesFromStatusChannel() {
+    log.info("===== Receive unknown message type and send response (TR) : successful =====");
+    var response = statusChannelHandler.handle("RF0000120220101120000", buildConfiguration());
+    assertThat(response.toString(), matchesPattern(TRANSACTION_RESPONSE_PATTERN));
   }
 
   @Test
