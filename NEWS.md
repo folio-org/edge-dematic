@@ -1,4 +1,13 @@
-## 1.7.0 - Unreleased
+## 1.8.0 - Unreleased
+
+## 1.7.0 - Released
+This release includes minor improvements and upgrades
+
+[Full Changelog](https://github.com/folio-org/edge-dematic/compare/v1.6.1...v1.7.0)
+
+### Bug Fixes
+* [EDGDEMATIC-74](https://issues.folio.org/browse/EDGDEMATIC-74) - Investigate message needed to connect Dematic EMS via TCP/IP
+* [EDGDEMATIC-73](https://issues.folio.org/browse/EDGDEMATIC-73) - edge-dematic: spring upgrade
 
 ## 1.6.1 - Released
 This release includes bug fixes
