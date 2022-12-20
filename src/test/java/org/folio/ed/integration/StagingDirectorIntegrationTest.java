@@ -86,7 +86,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
 
   @ParameterizedTest
   @ValueSource(strings = {"HM0000720221220202127", "RF0000120220101120000barcode1234567000loc123"})
-  void shouldReceiveHeartbeatMessageViaStatusChannelAndSendResponse(String message) {
+  void shouldReceiveIgnorableMessageViaStatusChannelAndSendResponse(String message) {
     log.info("===== Receive ignorable messages (HM, RF) and send transaction response (TR) : successful =====");
     setMessage(message);
     integrationService.registerStatusChannelFlow(buildConfiguration());
