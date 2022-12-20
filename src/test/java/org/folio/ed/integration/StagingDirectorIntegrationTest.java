@@ -5,14 +5,13 @@ import static java.util.function.Function.identity;
 import static org.awaitility.Awaitility.await;
 import static org.folio.ed.security.SecurityManagerServiceTest.OKAPI_TOKEN;
 import static org.folio.ed.support.ServerMessageHelper.setMessage;
-import static org.folio.ed.util.StagingDirectorMessageHelper.buildHeartbeatMessage;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.verify;
 
@@ -32,6 +31,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
@@ -84,21 +84,15 @@ public class StagingDirectorIntegrationTest extends TestBase {
     });
   }
 
-  @Test
-  void shouldReceiveHeartbeatMessageViaStatusChannelAndSendResponse() {
-    log.info("===== Receive Heartbeat (HM) and send response (TR) : successful =====");
-    setMessage(buildHeartbeatMessage());
+  @ParameterizedTest
+  @ValueSource(strings = {"HM0000720221220202127", "RF0000120220101120000barcode1234567000loc123"})
+  void shouldReceiveHeartbeatMessageViaStatusChannelAndSendResponse(String message) {
+    log.info("===== Receive ignorable messages (HM, RF) and send transaction response (TR) : successful =====");
+    setMessage(message);
     integrationService.registerStatusChannelFlow(buildConfiguration());
 
     await().atMost(1, SECONDS).untilAsserted(() ->
-      verify(statusChannelHandler).handle(matches(HEARTBEAT_PATTERN), any()));
-  }
-
-  @Test
-  void shouldRespondToUnknownMessagesFromStatusChannel() {
-    log.info("===== Receive unknown message type and send response (TR) : successful =====");
-    var response = statusChannelHandler.handle("RF0000120220101120000", buildConfiguration());
-    assertThat(response.toString(), matchesPattern(TRANSACTION_RESPONSE_PATTERN));
+      verify(statusChannelHandler).handle(eq(message), any()));
   }
 
   @Test
