@@ -30,7 +30,7 @@
     <wiremock.version>2.27.2</wiremock.version>
     <openfeign.version>3.1.3</openfeign.version>
     <edge-dematic.yaml.file>src/main/resources/swagger.api/edge-dematic.yaml</edge-dematic.yaml.file>
-    <sonar.exclusions>src/main/java/org/folio/ed/domain/**, src/main/java/org/folio/ed/client/AuthnClient.java, src/main/java/org/folio/ed/error/ErrorControllerImpl.java</sonar.exclusions>
+    <sonar.exclusions>src/main/java/org/folio/ed/domain/**, src/main/java/org/folio/ed/client/AuthnClient.java, src/main/java/org/folio/ed/error/ErrorControllerImpl.java, src/main/java/org/folio/ed/util/MessageTypes.java</sonar.exclusions>
     <edge-common.version>4.4.1</edge-common.version>
   </properties>
 
