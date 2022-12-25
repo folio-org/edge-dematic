@@ -1,7 +1,5 @@
 package org.folio.ed.util;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
 public enum MessageTypes {
   STATUS_CHECK("SC", 33),
   STATUS_MESSAGE("SM", 36),
@@ -11,7 +9,7 @@ public enum MessageTypes {
   PICK_REQUEST("PR", 220),
   HEARTBEAT("HM", 19),
   TRANSACTION_RESPONSE("TR", 22),
-  UNKNOWN(EMPTY, 0);
+  REQUEST_FILLED("RF", 42);
 
   private String code;
   private int payloadLength;
@@ -27,7 +25,7 @@ public enum MessageTypes {
         return mt;
       }
     }
-    return UNKNOWN;
+    throw new IllegalArgumentException("Unsupported message type: " + code);
   }
 
   public String getCode() {
