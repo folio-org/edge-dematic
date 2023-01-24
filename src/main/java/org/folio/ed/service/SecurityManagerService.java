@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.folio.ed.client.AuthnClient;
 import org.folio.ed.domain.entity.ConnectionSystemParameters;

@@ -1,7 +1,8 @@
 package org.folio.ed.controller;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
+import jakarta.validation.constraints.NotNull;
 import org.folio.ed.service.RemoteStorageService;
 import org.folio.ed.domain.dto.UpdateAsrItem;
 import org.folio.ed.rest.resource.UpdateASRItemStatusAvailableApi;
@@ -28,8 +29,8 @@ public class UpdateASRItemStatusAvailableController implements UpdateASRItemStat
   @Override
   public ResponseEntity<Void> updateAsrItemReturn(
       @ApiParam(required = true) @PathVariable("remoteStorageConfigurationId") String remoteStorageConfigurationId,
-      @ApiParam(required = true) @RequestHeader(value = "x-okapi-token") String xOkapiToken,
-      @ApiParam(required = true) @RequestHeader(value = "x-okapi-tenant") String xOkapiTenant,
+      @NotNull @ApiParam(required = true) @RequestHeader(value = "x-okapi-token") String xOkapiToken,
+      @NotNull @ApiParam(required = true) @RequestHeader(value = "x-okapi-tenant") String xOkapiTenant,
       @ApiParam(required = true) @Valid @RequestBody UpdateAsrItem updateAsrItem) {
     remoteStorageService.returnItemByBarcode(remoteStorageConfigurationId, updateAsrItem.getItemBarcode(), xOkapiTenant,
         xOkapiToken);

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.folio.ed.client.RemoteStorageClient;
 import org.folio.ed.converter.AccessionQueueRecordToAsrItemConverter;
@@ -18,7 +17,6 @@ import org.folio.ed.domain.request.ItemBarcodeRequest;
 import org.folio.ed.domain.dto.AsrItems;
 import org.folio.ed.domain.dto.AsrRequests;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -69,7 +67,7 @@ public class RemoteStorageService {
     var asrItems = new AsrItems();
     asrItems.asrItems(getAccessionQueueRecords(remoteStorageConfigurationId, tenantId, okapiToken).stream()
       .map(accessionQueueRecordToAsrItemConverter::convert)
-      .collect(Collectors.toList()));
+      .toList());
     return asrItems;
   }
 
@@ -93,21 +91,18 @@ public class RemoteStorageService {
       .getResult()
       .stream()
       .map(retrievalQueueRecordToAsrRequestConverter::convert)
-      .collect(Collectors.toList()));
+      .toList());
     return asrRequests;
   }
 
-  @Async
   public ResponseEntity<String> setAccessionedAsync(String itemBarcode, String tenantId, String okapiToken) {
     return remoteStorageClient.setAccessionedByBarcode(itemBarcode, tenantId, okapiToken);
   }
 
-  @Async
   public ResponseEntity<String> setRetrievedAsync(String itemBarcode, String tenantId, String okapiToken) {
     return remoteStorageClient.setRetrievalByBarcode(itemBarcode, tenantId, okapiToken);
   }
 
-  @Async
   public ResponseEntity<String> markItemAsMissingAsync(String itemBarcode, String tenantId, String okapiToken) {
     return remoteStorageClient.markItemAsMissing(itemBarcode, tenantId, okapiToken);
   }

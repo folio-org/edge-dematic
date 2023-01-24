@@ -2,12 +2,12 @@ package org.folio.ed.security;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.connector.RequestFacade;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +36,7 @@ public class EdgeSecurityFilter implements Filter {
     String path = ((RequestFacade) request).getServletPath();
     final HttpServletRequest httpRequest = (HttpServletRequest) request;
     RequestWithHeaders wrapper = new RequestWithHeaders(httpRequest);
+    wrapper.putHeader("If-None-Match","");
 
     if (isAuthorizationNeeded(path)) {
       var edgeApiKey = apiKeyHelper.getEdgeApiKey(request);
