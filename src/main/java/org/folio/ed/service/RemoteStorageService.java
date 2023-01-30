@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.extern.log4j.Log4j2;
 import org.folio.ed.client.RemoteStorageClient;
 import org.folio.ed.converter.AccessionQueueRecordToAsrItemConverter;
 import org.folio.ed.converter.RetrievalQueueRecordToAsrRequestConverter;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class RemoteStorageService {
 
   private static final String STAGING_DIRECTOR_NAME = "DEMATIC_SD";
@@ -37,22 +39,26 @@ public class RemoteStorageService {
   private final RetrievalQueueRecordToAsrRequestConverter retrievalQueueRecordToAsrRequestConverter;
 
   public List<AccessionQueueRecord> getAccessionQueueRecords(String storageId, String tenantId, String okapiToken) {
+    log.debug("getAccessionQueueRecords :: storageId:{} tenantId:{}",storageId,tenantId);
     return remoteStorageClient.getAccessionsByQuery(storageId, false, Integer.MAX_VALUE, tenantId, okapiToken)
       .getResult();
   }
 
   public List<RetrievalQueueRecord> getRetrievalQueueRecords(String storageId, String tenantId, String okapiToken) {
+    log.debug("getRetrievalQueueRecords :: storageId:{} tenantId:{}",storageId,tenantId);
     retrievalsMap.put(storageId, remoteStorageClient.getRetrievalsByQuery(storageId, false, Integer.MAX_VALUE, tenantId, okapiToken).getResult());
     return retrievalsMap.get(storageId);
   }
 
   public RetrievalQueueRecord getRetrievalByBarcode(String barcode, String configId) {
+    log.debug("getRetrievalByBarcode :: barcode:{} configId:{}",barcode,configId);
     return retrievalsMap.getOrDefault(configId, Collections.emptyList()).stream()
       .filter(record -> barcode.equals(record.getItemBarcode()))
       .findAny().orElse(null);
   }
 
   public List<Configuration> getStagingDirectorConfigurations(String tenantId, String okapiToken) {
+    log.debug("getStagingDirectorConfigurations :: tenantId:{}",tenantId);
     List<Configuration> stagingDirectorConfigurations = new ArrayList<>();
     remoteStorageClient.getStorageConfigurations(tenantId, okapiToken)
       .getResult()
@@ -66,6 +72,7 @@ public class RemoteStorageService {
   }
 
   public AsrItems getAsrItems(String remoteStorageConfigurationId, String tenantId, String okapiToken) {
+    log.debug("getAsrItems :: tenantId:{}",tenantId);
     var asrItems = new AsrItems();
     asrItems.asrItems(getAccessionQueueRecords(remoteStorageConfigurationId, tenantId, okapiToken).stream()
       .map(accessionQueueRecordToAsrItemConverter::convert)
@@ -75,18 +82,21 @@ public class RemoteStorageService {
 
   public ResponseEntity<String> checkInItemByBarcode(String remoteStorageConfigurationId, String itemBarcode, String tenantId,
       String okapiToken) {
+    log.debug("checkInItemByBarcode :: remoteStorageConfigurationId:{} itemBarcode:{}",remoteStorageConfigurationId,itemBarcode);
     var itemBarcodeRequest = new ItemBarcodeRequest();
     itemBarcodeRequest.setItemBarcode(itemBarcode);
     return remoteStorageClient.checkInItem(remoteStorageConfigurationId, itemBarcodeRequest, tenantId, okapiToken);
   }
 
   public ResponseEntity<String> returnItemByBarcode(String remoteStorageConfigurationId, String itemBarcode, String tenantId, String okapiToken) {
+    log.debug("returnItemByBarcode :: remoteStorageConfigurationId:{} itemBarcode:{}",remoteStorageConfigurationId,itemBarcode);
     var itemBarcodeRequest = new ItemBarcodeRequest();
     itemBarcodeRequest.setItemBarcode(itemBarcode);
     return remoteStorageClient.returnItem(remoteStorageConfigurationId, itemBarcodeRequest, tenantId, okapiToken);
   }
 
   public AsrRequests getRequests(String remoteStorageConfigurationId, String tenantId, String okapiToken) {
+    log.debug("getRequests :: remoteStorageConfigurationId:{} tenantId:{}",remoteStorageConfigurationId,tenantId);
     var asrRequests = new AsrRequests();
     asrRequests.asrRequests(remoteStorageClient
       .getRetrievalsByQuery(remoteStorageConfigurationId, false, Integer.MAX_VALUE, tenantId, okapiToken)
@@ -99,16 +109,19 @@ public class RemoteStorageService {
 
   @Async
   public ResponseEntity<String> setAccessionedAsync(String itemBarcode, String tenantId, String okapiToken) {
+    log.debug("setAccessionedAsync :: itemBarcode:{} tenantId:{}",itemBarcode,tenantId);
     return remoteStorageClient.setAccessionedByBarcode(itemBarcode, tenantId, okapiToken);
   }
 
   @Async
   public ResponseEntity<String> setRetrievedAsync(String itemBarcode, String tenantId, String okapiToken) {
+    log.debug("setRetrievedAsync :: itemBarcode:{} tenantId:{}",itemBarcode,tenantId);
     return remoteStorageClient.setRetrievalByBarcode(itemBarcode, tenantId, okapiToken);
   }
 
   @Async
   public ResponseEntity<String> markItemAsMissingAsync(String itemBarcode, String tenantId, String okapiToken) {
+    log.debug("markItemAsMissingAsync :: itemBarcode:{} tenantId:{}",itemBarcode,tenantId);
     return remoteStorageClient.markItemAsMissing(itemBarcode, tenantId, okapiToken);
   }
 
