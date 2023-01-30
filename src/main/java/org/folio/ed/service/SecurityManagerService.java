@@ -92,6 +92,7 @@ public class SecurityManagerService {
 
   private ConnectionSystemParameters enrichConnectionSystemParametersWithOkapiToken(
     String salt, String tenantId, String username) {
+    log.debug("enrichConnectionSystemParametersWithOkapiToken :: tenantId:{}",tenantId);
     try {
       return enrichWithOkapiToken(ConnectionSystemParameters.builder()
         .tenantId(tenantId)
