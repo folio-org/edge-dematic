@@ -2,7 +2,7 @@ package org.folio.ed.support;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.integration.handler.GenericHandler;
+import org.springframework.integration.core.GenericHandler;
 import org.springframework.messaging.MessageHeaders;
 
 public class ServerMessageHandler implements GenericHandler<String> {

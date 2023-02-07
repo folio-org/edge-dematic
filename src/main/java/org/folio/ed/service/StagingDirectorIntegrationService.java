@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
-import org.springframework.integration.dsl.IntegrationFlows;
+import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.MessageChannels;
 import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.dsl.context.IntegrationFlowContext;
@@ -26,7 +26,7 @@ import org.springframework.integration.ip.tcp.connection.TcpConnectionCloseEvent
 import org.springframework.integration.ip.tcp.connection.TcpConnectionOpenEvent;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 
 @Service
@@ -78,7 +78,7 @@ public class StagingDirectorIntegrationService {
   public IntegrationFlowContext.IntegrationFlowRegistration registerPrimaryChannelOutboundGateway(
     Configuration configuration) {
     return integrationFlowContext
-      .registration(IntegrationFlows
+      .registration(IntegrationFlow
         .from(configuration.getName() + POLLER_CHANNEL_POSTFIX)
         .<String>handle((p, h) -> primaryChannelHandler.handle(p, configuration))
         .handle(Tcp
@@ -94,7 +94,7 @@ public class StagingDirectorIntegrationService {
   public IntegrationFlowContext.IntegrationFlowRegistration registerPrimaryChannelHeartbeatPoller(
     Configuration configuration) {
     return integrationFlowContext
-      .registration(IntegrationFlows
+      .registration(IntegrationFlow
         .fromSupplier(() -> buildHeartbeatMessageIfNeeded(configuration),
           p -> p.poller(Pollers.fixedDelay(SECONDS.toMillis(1))))
         .channel(configuration.getName() + POLLER_CHANNEL_POSTFIX)
@@ -113,7 +113,7 @@ public class StagingDirectorIntegrationService {
   public IntegrationFlowContext.IntegrationFlowRegistration registerPrimaryChannelAccessionPoller(
     Configuration configuration) {
     return integrationFlowContext
-      .registration(IntegrationFlows
+      .registration(IntegrationFlow
         .fromSupplier(() -> {
             var connectionSystemParameters = sms.getStagingDirectorConnectionParameters(configuration.getTenantId());
             return remoteStorageService.getAccessionQueueRecords(configuration.getId(), connectionSystemParameters.getTenantId(),
@@ -130,7 +130,7 @@ public class StagingDirectorIntegrationService {
 
   public IntegrationFlowContext.IntegrationFlowRegistration registerPrimaryChannelRetrievalPoller(Configuration configuration) {
     return integrationFlowContext
-      .registration(IntegrationFlows
+      .registration(IntegrationFlow
         .fromSupplier(() -> remoteStorageService.getRetrievalQueueRecords(configuration.getId(), configuration.getTenantId(),
           sms.getStagingDirectorConnectionParameters(configuration.getTenantId()).getOkapiToken()),
           p -> p.poller(Pollers.fixedDelay(resolvePollingTimeFrame(configuration.getAccessionDelay(),
@@ -144,7 +144,7 @@ public class StagingDirectorIntegrationService {
 
   public IntegrationFlowContext.IntegrationFlowRegistration registerFeedbackChannelListener(Configuration configuration) {
     return integrationFlowContext
-      .registration(IntegrationFlows
+      .registration(IntegrationFlow
         .from(MessageChannels.publishSubscribe(configuration.getName() + FEEDBACK_CHANNEL_POSTFIX))
         .<String>handle((p, h) -> feedbackChannelHandler.handle(p, configuration))
         .channel(MessageChannels.publishSubscribe(configuration.getName() + POLLER_CHANNEL_POSTFIX))
@@ -154,7 +154,7 @@ public class StagingDirectorIntegrationService {
 
   public IntegrationFlowContext.IntegrationFlowRegistration registerStatusChannelFlow(Configuration configuration) {
     return integrationFlowContext
-      .registration(IntegrationFlows
+      .registration(IntegrationFlow
         .from(Tcp
           .inboundGateway(Tcp
             .netClient(resolveAddress(configuration.getStatusUrl()), resolvePort(configuration.getStatusUrl()))

@@ -1,5 +1,6 @@
 package org.folio.ed.controller;
 
+import jakarta.validation.constraints.NotNull;
 import org.folio.ed.service.RemoteStorageService;
 import org.folio.ed.domain.dto.AsrItems;
 import org.folio.ed.rest.resource.LookupNewAsrItemsApi;
@@ -27,8 +28,8 @@ public class LookupNewAsrItemsController implements LookupNewAsrItemsApi {
   @Override
   public ResponseEntity<AsrItems> getAsrItems(
       @ApiParam(required = true) @PathVariable("remoteStorageConfigurationId") String remoteStorageConfigurationId,
-      @ApiParam(required = true) @RequestHeader(value = "x-okapi-token") String xOkapiToken,
-      @ApiParam(required = true) @RequestHeader(value = "x-okapi-tenant") String xOkapiTenant) {
+      @NotNull @ApiParam(required = true) @RequestHeader(value = "x-okapi-token") String xOkapiToken,
+      @NotNull @ApiParam(required = true) @RequestHeader(value = "x-okapi-tenant") String xOkapiTenant) {
 
     var headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_XML);
