@@ -36,7 +36,6 @@ public class EdgeSecurityFilter implements Filter {
     String path = ((RequestFacade) request).getServletPath();
     final HttpServletRequest httpRequest = (HttpServletRequest) request;
     RequestWithHeaders wrapper = new RequestWithHeaders(httpRequest);
-    wrapper.putHeader("If-None-Match","");
 
     if (isAuthorizationNeeded(path)) {
       var edgeApiKey = apiKeyHelper.getEdgeApiKey(request);
