@@ -52,9 +52,7 @@ public class StagingDirectorIntegrationService {
 
   @PostConstruct
   private void createIntegrationFlows() {
-    log.info("createIntegrationFlows:: createIntegrationFlows");
     try{
-      log.info("createIntegrationFlows:: try block");
       removeExistingFlows();
       var tenantsUsersMap = sms.getStagingDirectorTenantsUsers();
       for (String tenantId : tenantsUsersMap.keySet()) {
@@ -64,7 +62,7 @@ public class StagingDirectorIntegrationService {
       }
     }
     catch( Exception ex) {
-      log.info("createIntegrationFlows:: exception ex : {}, message : {}", ex, ex.getMessage());
+      log.info("createIntegrationFlows:: exception : {}, message : {}", ex, ex.getMessage());
     }
   }
 
