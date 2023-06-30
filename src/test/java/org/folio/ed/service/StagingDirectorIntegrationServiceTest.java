@@ -3,6 +3,7 @@ package org.folio.ed.service;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.folio.ed.TestBase;
 import org.folio.ed.config.MockServerConfig;
@@ -32,7 +33,17 @@ public class StagingDirectorIntegrationServiceTest extends TestBase {
   }
 
   @Test
-  void shouldRemoveIntegrationFlows() {
+  void shouldHandleExceptionInCreateIntegrationFlows() {
+    try{
+      integrationService.removeExistingFlows();
+    } catch (Exception e) {
+      fail("exception occured :",e);
+    }
+  }
+
+
+  @Test
+  void shouldRemoveIntegrationFlows() throws Exception {
     integrationService.removeExistingFlows();
     assertThat(integrationFlowContext.getRegistry().size(), is(0));
   }

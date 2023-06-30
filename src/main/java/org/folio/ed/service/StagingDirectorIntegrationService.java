@@ -7,6 +7,7 @@ import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolvePolli
 import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolvePort;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.folio.ed.domain.dto.Configuration;
 import org.folio.ed.handler.FeedbackChannelHandler;
@@ -32,7 +33,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
+@Log4j2
 public class StagingDirectorIntegrationService {
   private static final Logger LOGGER = LoggerFactory.getLogger(StagingDirectorIntegrationService.class);
 
@@ -62,7 +63,7 @@ public class StagingDirectorIntegrationService {
       }
     }
     catch( Exception ex) {
-      log.info("createIntegrationFlows:: exception : {}, message : {}", ex, ex.getMessage());
+      log.error("createIntegrationFlows:: exception : {}, message : {}", ex, ex.getMessage());
     }
   }
 
@@ -75,7 +76,7 @@ public class StagingDirectorIntegrationService {
     registerStatusChannelFlow(configuration);
   }
 
-  public void removeExistingFlows() {
+  public void removeExistingFlows() throws Exception{
     integrationFlowContext.getRegistry().keySet().forEach(key -> {
       integrationFlowContext.getRegistrationById(key).stop();
       integrationFlowContext.remove(key);
