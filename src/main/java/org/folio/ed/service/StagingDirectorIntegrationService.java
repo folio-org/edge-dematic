@@ -54,7 +54,7 @@ public class StagingDirectorIntegrationService {
   @PostConstruct
   private void createIntegrationFlows() {
     try{
-      removeExistingFlows();
+       removeExistingFlows();
       var tenantsUsersMap = sms.getStagingDirectorTenantsUsers();
       for (String tenantId : tenantsUsersMap.keySet()) {
         for (Configuration configuration : remoteStorageService.getStagingDirectorConfigurations(tenantId, sms.getStagingDirectorConnectionParameters(tenantId).getOkapiToken())) {
@@ -76,7 +76,7 @@ public class StagingDirectorIntegrationService {
     registerStatusChannelFlow(configuration);
   }
 
-  public void removeExistingFlows() throws Exception{
+  public void removeExistingFlows() {
     integrationFlowContext.getRegistry().keySet().forEach(key -> {
       integrationFlowContext.getRegistrationById(key).stop();
       integrationFlowContext.remove(key);
