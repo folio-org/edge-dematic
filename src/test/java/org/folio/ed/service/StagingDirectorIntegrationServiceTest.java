@@ -3,6 +3,7 @@ package org.folio.ed.service;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -50,6 +51,8 @@ public class StagingDirectorIntegrationServiceTest extends TestBase {
     privateMethod.invoke(stagingDirectorIntegrationService);
 
     verify(sms,times(1)).getStagingDirectorTenantsUsers();
+    var res = verify(sms).getStagingDirectorTenantsUsers();
+    assertEquals(null,res);
   }
 
 
