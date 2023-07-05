@@ -7,6 +7,8 @@ import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolvePolli
 import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolvePort;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.folio.ed.domain.dto.Configuration;
 import org.folio.ed.handler.FeedbackChannelHandler;
 import org.folio.ed.handler.PrimaryChannelHandler;
@@ -31,6 +33,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class StagingDirectorIntegrationService {
   private static final Logger LOGGER = LoggerFactory.getLogger(StagingDirectorIntegrationService.class);
 
@@ -50,12 +53,17 @@ public class StagingDirectorIntegrationService {
 
   @PostConstruct
   private void createIntegrationFlows() {
-    removeExistingFlows();
-    var tenantsUsersMap = sms.getStagingDirectorTenantsUsers();
-    for (String tenantId : tenantsUsersMap.keySet()) {
-      for (Configuration configuration : remoteStorageService.getStagingDirectorConfigurations(tenantId, sms.getStagingDirectorConnectionParameters(tenantId).getOkapiToken())) {
-        createFlows(configuration);
+    try{
+       removeExistingFlows();
+      var tenantsUsersMap = sms.getStagingDirectorTenantsUsers();
+      for (String tenantId : tenantsUsersMap.keySet()) {
+        for (Configuration configuration : remoteStorageService.getStagingDirectorConfigurations(tenantId, sms.getStagingDirectorConnectionParameters(tenantId).getOkapiToken())) {
+          createFlows(configuration);
+        }
       }
+    }
+    catch( Exception ex) {
+      log.error("createIntegrationFlows:: exception : {}, message : {}", ex, ex.getMessage());
     }
   }
 
