@@ -1,3 +1,7 @@
+## 2.0.1 2023-07-06
+
+* [EDGDEMATIC-88](https://issues.folio.org/browse/EDGDEMATIC-88) - Edge-dematic module not started properly.
+
 ## 2.0.0 2023-02-23
 
 * [EDGDEMATIC-61](https://issues.folio.org/browse/EDGDEMATIC-61) - Logging improvement
