@@ -12,6 +12,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.integration.dsl.context.IntegrationFlowContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import java.lang.reflect.Method;
 
 import java.util.concurrent.TimeUnit;
 
@@ -35,5 +41,23 @@ public class StagingDirectorIntegrationServiceTest extends TestBase {
   void shouldRemoveIntegrationFlows() {
     integrationService.removeExistingFlows();
     assertThat(integrationFlowContext.getRegistry().size(), is(0));
+  }
+
+  @Test
+  void shouldCreateExceptionInCreateIntegrationFlows() throws Exception {
+
+    IntegrationFlowContext integrationFlowContext1 = mock(IntegrationFlowContext.class);
+    RemoteStorageService remoteStorageService = mock(RemoteStorageService.class);
+    SecurityManagerService sms = mock(SecurityManagerService.class);
+    StagingDirectorIntegrationService stagingDirectorIntegrationService = new StagingDirectorIntegrationService(integrationFlowContext1,remoteStorageService,null, null, null, null,sms);
+    doThrow(new RuntimeException("test exception")).when(sms).getStagingDirectorTenantsUsers();
+
+    Method privateMethod = StagingDirectorIntegrationService.class.getDeclaredMethod("createIntegrationFlows");
+    privateMethod.setAccessible(true);
+    privateMethod.invoke(stagingDirectorIntegrationService);
+
+    verify(sms,times(1)).getStagingDirectorTenantsUsers();
+    var res = verify(sms).getStagingDirectorTenantsUsers();
+    assertEquals(null,res);
   }
 }
