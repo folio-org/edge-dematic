@@ -1,6 +1,6 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Thu Sep 07 21:58:21 IST 2023
-edge-common-spring-3.0.0.jar>=
+#Thu Sep 07 22:02:19 IST 2023
+edge-common-spring-3.0.0.pom>in-project=
 edge-common-spring-3.0.0.jar>in-project=
 edge-common-spring-3.0.0.pom>=
-edge-common-spring-3.0.0.pom>in-project=
+edge-common-spring-3.0.0.jar>=
