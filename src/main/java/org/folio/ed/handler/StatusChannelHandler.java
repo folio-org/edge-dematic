@@ -8,7 +8,7 @@ import static org.folio.ed.util.StagingDirectorMessageHelper.resolveMessageType;
 
 import org.folio.ed.domain.dto.Configuration;
 import org.folio.ed.service.RemoteStorageService;
-import org.folio.ed.service.SecurityManagerService;
+import org.folio.ed.service.DematicSecurityManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class StatusChannelHandler {
   private static final Logger LOGGER = LoggerFactory.getLogger(StatusChannelHandler.class);
 
   private final RemoteStorageService remoteStorageService;
-  private final SecurityManagerService sms;
+  private final DematicSecurityManagerService sms;
 
   public Object handle(String payload, Configuration configuration) {
     LOGGER.info("Status channel handler income: \"{}\"", payload);
@@ -29,11 +29,11 @@ public class StatusChannelHandler {
     if (resolveMessageType(payload) == INVENTORY_CONFIRM) {
       remoteStorageService.setAccessionedAsync(extractBarcode(payload), tenantId,
         sms.getStagingDirectorConnectionParameters(tenantId)
-          .getOkapiToken());
+          .getOkapiToken().accessToken());
     } else if (resolveMessageType(payload) == ITEM_RETURNED) {
       remoteStorageService.returnItemByBarcode(configuration.getId(), extractBarcode(payload), tenantId,
         sms.getStagingDirectorConnectionParameters(tenantId)
-          .getOkapiToken());
+          .getOkapiToken().accessToken());
     }
     var response = buildTransactionResponseMessage(payload);
     LOGGER.info("Status channel sending: \"{}\"", response);

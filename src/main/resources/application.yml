@@ -32,6 +32,10 @@ feign:
     config:
       default:
         loggerLevel: full
+folio:
+  system-user:
+    username: ${SYSTEM_USER_NAME:system-user}
+  environment: ${ENV:folio}
 
 logging:
   level:

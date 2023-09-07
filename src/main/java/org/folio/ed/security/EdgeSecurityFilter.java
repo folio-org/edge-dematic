@@ -13,8 +13,9 @@ import org.apache.catalina.connector.RequestFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.folio.ed.domain.entity.RequestWithHeaders;
 import org.folio.ed.error.AuthorizationException;
-import org.folio.ed.service.SecurityManagerService;
+import org.folio.ed.service.DematicSecurityManagerService;
 import org.folio.ed.util.ApiKeyHelper;
+import org.folio.edgecommonspring.security.SecurityManagerService;
 import org.folio.spring.integration.XOkapiHeaders;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,7 @@ public class EdgeSecurityFilter implements Filter {
 
   public static final String HEALTH_ENDPOINT = "/admin/health";
   public static final String INFO_ENDPOINT = "/admin/info";
-  private final SecurityManagerService securityManagerService;
+  private final SecurityManagerService sms;
   private final ApiKeyHelper apiKeyHelper;
 
   @Override
@@ -44,9 +45,9 @@ public class EdgeSecurityFilter implements Filter {
         throw new AuthorizationException("Edge API key not found in the request");
       }
 
-      var systemUserParameters = securityManagerService.getOkapiConnectionParameters(edgeApiKey);
+      var systemUserParameters = sms.getParamsWithToken(edgeApiKey);
 
-      wrapper.putHeader(XOkapiHeaders.TOKEN, systemUserParameters.getOkapiToken());
+      wrapper.putHeader(XOkapiHeaders.TOKEN, systemUserParameters.getOkapiToken().accessToken());
       wrapper.putHeader(XOkapiHeaders.TENANT, systemUserParameters.getTenantId());
 
     }

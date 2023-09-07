@@ -1,7 +1,7 @@
 package org.folio.ed;
 
 import static java.util.Optional.ofNullable;
-import static org.folio.ed.service.SecurityManagerService.SYSTEM_USER_PARAMETERS_CACHE;
+import static org.folio.ed.service.DematicSecurityManagerService.SYSTEM_USER_PARAMETERS_CACHE;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;

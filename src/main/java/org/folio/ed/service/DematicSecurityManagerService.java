@@ -1,9 +1,7 @@
 package org.folio.ed.service;
 
-import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 import static org.folio.ed.util.Constants.COMMA;
-import static org.folio.edge.core.Constants.X_OKAPI_TOKEN;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -19,15 +17,11 @@ import java.util.regex.Pattern;
 
 import jakarta.annotation.PostConstruct;
 
-import org.folio.ed.client.AuthnClient;
-import org.folio.ed.domain.entity.ConnectionSystemParameters;
 import org.folio.ed.error.AuthorizationException;
 import org.folio.ed.security.SecureStoreFactory;
 import org.folio.ed.security.SecureTenantsProducer;
-import org.folio.edge.core.model.ClientInfo;
 import org.folio.edge.core.security.SecureStore;
-import org.folio.edge.core.security.SecureStore.NotFoundException;
-import org.folio.edge.core.utils.ApiKeyUtils;
+import org.folio.edgecommonspring.security.SecurityManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -37,7 +31,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Component
 @Log4j2
-public class SecurityManagerService {
+public class DematicSecurityManagerService {
 
   public static final String SYSTEM_USER_PARAMETERS_CACHE = "systemUserParameters";
 
@@ -54,13 +48,14 @@ public class SecurityManagerService {
   private String stagingDirectorClient;
 
   @Autowired
-  private AuthnClient authnClient;
+  private SecurityManagerService sms;
 
   private static final Pattern isURL = Pattern.compile("(?i)^http[s]?://.*");
 
   private SecureStore secureStore;
 
   private Map<String, String> stagingDirectorTenantsUserMap = new HashMap<>();
+
 
   @PostConstruct
   public void init() {
@@ -75,34 +70,12 @@ public class SecurityManagerService {
   }
 
   @Cacheable(value = SYSTEM_USER_PARAMETERS_CACHE, key = "#tenantId")
-  public ConnectionSystemParameters getStagingDirectorConnectionParameters(String tenantId) {
-    return enrichConnectionSystemParametersWithOkapiToken(stagingDirectorClient, tenantId, stagingDirectorTenantsUserMap.get(tenantId));
+  public org.folio.edgecommonspring.domain.entity.ConnectionSystemParameters getStagingDirectorConnectionParameters(String tenantId) {
+    return sms.getParamsDependingOnCachePresent(stagingDirectorClient, tenantId, stagingDirectorTenantsUserMap.get(tenantId));
+    //return enrichConnectionSystemParametersWithOkapiToken(stagingDirectorClient, tenantId, stagingDirectorTenantsUserMap.get(tenantId));
   }
 
-  @Cacheable(value = SYSTEM_USER_PARAMETERS_CACHE, key = "#edgeApiKey")
-  public ConnectionSystemParameters getOkapiConnectionParameters(String edgeApiKey) {
-    try {
-      ClientInfo clientInfo = ApiKeyUtils.parseApiKey(edgeApiKey);
-      return enrichConnectionSystemParametersWithOkapiToken(clientInfo.salt, clientInfo.tenantId,
-        clientInfo.username);
-    } catch (ApiKeyUtils.MalformedApiKeyException e) {
-      throw new AuthorizationException("Malformed edge api key: " + edgeApiKey);
-    }
-  }
 
-  private ConnectionSystemParameters enrichConnectionSystemParametersWithOkapiToken(
-    String salt, String tenantId, String username) {
-    log.debug("enrichConnectionSystemParametersWithOkapiToken :: tenantId:{}",tenantId);
-    try {
-      return enrichWithOkapiToken(ConnectionSystemParameters.builder()
-        .tenantId(tenantId)
-        .username(username)
-        .password(secureStore.get(salt, tenantId, username))
-        .build());
-    } catch (NotFoundException e) {
-      throw new AuthorizationException("Cannot get system connection properties for: " + tenantId);
-    }
-  }
 
   public Set<String> getStagingDirectorTenantsUserMap() {
     return stagingDirectorTenantsUserMap.keySet();
@@ -112,14 +85,6 @@ public class SecurityManagerService {
     return stagingDirectorTenantsUserMap;
   }
 
-  private ConnectionSystemParameters enrichWithOkapiToken(ConnectionSystemParameters connectionSystemParameters) {
-    final String token = ofNullable(authnClient.getApiKey(connectionSystemParameters, connectionSystemParameters.getTenantId())
-      .getHeaders()
-      .get(X_OKAPI_TOKEN)).orElseThrow(() -> new AuthorizationException("Cannot retrieve okapi token"))
-        .get(0);
-    connectionSystemParameters.setOkapiToken(token);
-    return connectionSystemParameters;
-  }
 
   private static Properties getProperties(String secureStorePropFile) {
     Properties secureStoreProps = new Properties();

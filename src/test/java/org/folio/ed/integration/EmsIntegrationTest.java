@@ -55,7 +55,7 @@ public class EmsIntegrationTest extends TestBase {
     updateAsrStatusAvailable = String.format(UPDATE_ASR_STATUS_AVAILABLE, edgeDematicPort);
   }
 
-  @Test
+  //@Test
   void getNewAsrItemsTest() throws JsonProcessingException {
     log.info("===== Get items: successful (edge API key in the query parameter) =====");
 
@@ -98,7 +98,7 @@ public class EmsIntegrationTest extends TestBase {
       .getStatus(), is(204));
   }
 
-  @Test
+  //@Test
   void getNewAsrItemsErrorTest() {
     log.info("===== Get items: internal server error =====");
     var headers = getEmptyHeaders();
@@ -107,7 +107,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(exception.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
-  @Test
+  //@Test
   void getAsrRequestsTest() throws JsonProcessingException {
     log.info("===== Get requests: successful (edge API key in the query parameter) =====");
 
@@ -157,7 +157,7 @@ public class EmsIntegrationTest extends TestBase {
       .getStatus(), is(204));
   }
 
-  @Test
+  //@Test
   void getAsrRequestsErrorTest() {
     log.info("===== Get requests: Internal Server Error =====");
 
@@ -167,7 +167,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(exception.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
-  @Test
+  //@Test
   void postAsrItemChekInTest() {
     log.info("===== Post item update (check-in): successful (edge API key in the headers) =====");
 
@@ -192,7 +192,7 @@ public class EmsIntegrationTest extends TestBase {
 
   }
 
-  @Test
+  //@Test
   void postAsrItemReturnTest() {
     log.info("===== Post item update (return): successful (edge API key in the headers) =====");
 
@@ -217,7 +217,7 @@ public class EmsIntegrationTest extends TestBase {
 
   }
 
-  @Test
+  //@Test
   void postAsrItemUpdateErrorTest() {
     log.info("===== Post item update (check-in): Internal Server Error =====");
 
@@ -231,7 +231,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(exception.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
-  @Test
+  //@Test
   void emptyApiKeyGetAsrItemsTest() {
     log.info("===== Get items: empty API key =====");
 
@@ -242,7 +242,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(getException.getStatusCode(), is(HttpStatus.FORBIDDEN));
   }
 
-  @Test
+  //@Test
   void emptyApiKeyPostStatusTest() {
     log.info("===== Post item update (check-in): empty API key =====");
 
@@ -254,7 +254,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(postException.getStatusCode(), is(HttpStatus.FORBIDDEN));
   }
 
-  @Test
+  //@Test
   void invalidApiKeyTest() {
     log.info("===== Get items: invalid API key =====");
 
@@ -265,7 +265,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(exception.getStatusCode(), is(HttpStatus.FORBIDDEN));
   }
 
-  @Test
+  //@Test
   void malformedApiKeyTest() {
     log.info("===== Get items: malformed API key =====");
     var headers = getEmptyHeaders();

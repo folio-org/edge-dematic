@@ -8,7 +8,7 @@ import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolvePort;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
+
 import org.folio.ed.domain.dto.Configuration;
 import org.folio.ed.handler.FeedbackChannelHandler;
 import org.folio.ed.handler.PrimaryChannelHandler;
@@ -49,7 +49,7 @@ public class StagingDirectorIntegrationService {
   private final PrimaryChannelHandler primaryChannelHandler;
   private final FeedbackChannelHandler feedbackChannelHandler;
   private final StagingDirectorSerializerDeserializer serializerDeserializer;
-  private final SecurityManagerService sms;
+  private final DematicSecurityManagerService sms;
 
   @PostConstruct
   private void createIntegrationFlows() {
@@ -57,7 +57,8 @@ public class StagingDirectorIntegrationService {
        removeExistingFlows();
       var tenantsUsersMap = sms.getStagingDirectorTenantsUsers();
       for (String tenantId : tenantsUsersMap.keySet()) {
-        for (Configuration configuration : remoteStorageService.getStagingDirectorConfigurations(tenantId, sms.getStagingDirectorConnectionParameters(tenantId).getOkapiToken())) {
+        for (Configuration configuration : remoteStorageService.getStagingDirectorConfigurations(tenantId,
+          sms.getStagingDirectorConnectionParameters(tenantId).getOkapiToken().accessToken())) {
           createFlows(configuration);
         }
       }
@@ -125,7 +126,7 @@ public class StagingDirectorIntegrationService {
         .fromSupplier(() -> {
             var connectionSystemParameters = sms.getStagingDirectorConnectionParameters(configuration.getTenantId());
             return remoteStorageService.getAccessionQueueRecords(configuration.getId(), connectionSystemParameters.getTenantId(),
-              connectionSystemParameters.getOkapiToken());
+              connectionSystemParameters.getOkapiToken().accessToken());
           },
           p -> p.poller(Pollers.fixedDelay(resolvePollingTimeFrame(configuration.getAccessionDelay(),
             configuration.getAccessionTimeUnit()))))
@@ -140,7 +141,7 @@ public class StagingDirectorIntegrationService {
     return integrationFlowContext
       .registration(IntegrationFlow
         .fromSupplier(() -> remoteStorageService.getRetrievalQueueRecords(configuration.getId(), configuration.getTenantId(),
-          sms.getStagingDirectorConnectionParameters(configuration.getTenantId()).getOkapiToken()),
+          sms.getStagingDirectorConnectionParameters(configuration.getTenantId()).getOkapiToken().accessToken()),
           p -> p.poller(Pollers.fixedDelay(resolvePollingTimeFrame(configuration.getAccessionDelay(),
             configuration.getAccessionTimeUnit()))))
         .split()
