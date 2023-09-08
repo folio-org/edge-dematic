@@ -64,7 +64,7 @@ public class TestBase {
     return restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), clazz);
   }
 
-  public <T> ResponseEntity<T> post(String url, HttpHeaders headers, Object entity, Class<T> clazz) {
+  public <T> ResponseEntity<T> postCalls(String url, HttpHeaders headers, Object entity, Class<T> clazz) {
     return restTemplate.exchange(url, HttpMethod.POST, new HttpEntity<>(entity, headers), clazz);
   }
 

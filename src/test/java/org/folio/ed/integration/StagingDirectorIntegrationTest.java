@@ -1,5 +1,8 @@
 package org.folio.ed.integration;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.function.Function.identity;
 import static org.awaitility.Awaitility.await;
@@ -15,17 +18,18 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.verify;
 
-import com.github.tomakehurst.wiremock.http.RequestMethod;
-import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
-import lombok.extern.log4j.Log4j2;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.folio.ed.TestBase;
+import org.folio.ed.config.MockServerConfig;
+import org.folio.ed.domain.dto.Configuration;
+import org.folio.ed.handler.PrimaryChannelHandler;
+import org.folio.ed.handler.StatusChannelHandler;
 import org.folio.ed.service.RemoteStorageService;
 import org.folio.ed.service.StagingDirectorIntegrationService;
 import org.folio.ed.support.ServerMessageHandler;
-import org.folio.ed.domain.dto.Configuration;
-import org.folio.ed.config.MockServerConfig;
-import org.folio.ed.handler.PrimaryChannelHandler;
-import org.folio.ed.handler.StatusChannelHandler;
 import org.folio.ed.util.StagingDirectorErrorCodes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,11 +39,13 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.integration.dsl.context.IntegrationFlowContext;
 
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import com.github.tomakehurst.wiremock.http.RequestMethod;
+import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
+
+import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Import(MockServerConfig.class)
@@ -68,6 +74,12 @@ public class StagingDirectorIntegrationTest extends TestBase {
   @BeforeEach
   public void clearIntegrationContext() {
     integrationFlowContext.getRegistry().keySet().forEach(k -> integrationFlowContext.remove(k));
+    wireMockServer.stubFor(post(urlEqualTo("/authn/login-with-expiry"))
+      .willReturn(aResponse()
+        .withStatus(HttpStatus.CREATED.value())
+        .withBody("{\"accessTokenExpiration\": \"2030-09-01T13:04:35Z\",\n \"refreshTokenExpiration\": \"2030-09-08T12:54:35Z\"\n}")
+        .withHeader("set-cookie", "folioAccessToken=AAA-BBB-CCC-DDD")
+        .withHeader("Content-Type", "application/json")));
   }
 
   @Test
@@ -95,7 +107,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
       verify(statusChannelHandler).handle(eq(message), any()));
   }
 
-//  @Test
+  @Test
   void shouldSendInventoryAddMessageWhenNewItemIsPresent() {
     log.info("===== Get accession queue records and send Inventory Add (IA) : successful =====");
     Configuration configuration = buildConfiguration();
@@ -110,7 +122,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     });
   }
 
-//  @Test
+  @Test
   void shouldSetAccessionedWhenInventoryConfirmSuccessful() {
     log.info("===== Receive successful Inventory Confirm (IC) and set accessioned by barcode : successful =====");
     setMessage("IC0000120200101121212697685458679  000");
@@ -131,7 +143,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     assertThat(setAccessionEvent.getResponse().getStatus(), is(204));
   }
 
-//  @ParameterizedTest
+  @ParameterizedTest
   @EnumSource(value = StagingDirectorErrorCodes.class, names = { "SUCCESS", "INVALID_SKU_FORMAT", "SKU_ALREADY_IN_DATABASE" })
   void shouldSetAccessionedByBarcodeOnInventoryConfirmWithAnyCode(StagingDirectorErrorCodes errorCode) {
     log.info("===== Receive Inventory Confirm (IC) with any code : successful =====");
@@ -151,7 +163,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
       .orElse(null));
   }
 
-  //@Test
+  @Test
   void shouldSendStatusCheckMessageWhenNewRetrievalIsPresent() {
     log.info("===== Get retrieval queue records and send Status Check (SC) : successful =====");
     Configuration configuration = buildConfiguration();
@@ -165,7 +177,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     });
   }
 
-//  @Test
+  @Test
   void shouldSendPickRequestMessageSetRetrievedAndCheckInWhenStatusMessageSuccessful() {
     log.info("===== Receive successful Status Message (SM), send Pick Request (PR), set retrieval by barcode and check-in item : successful =====");
     Configuration configuration = buildConfiguration();
@@ -193,7 +205,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     assertThat(serveEvent.getResponse().getStatus(), is(204));
   }
 
-//  @ParameterizedTest
+  @ParameterizedTest
   @EnumSource(value = StagingDirectorErrorCodes.class, names = { "INVENTORY_NOT_IN_DATABASE", "SKU_NOT_IN_DATABASE", "INVALID_SKU_FORMAT" })
   void shouldMarkItemAsMissingOnStatusMessageWithCodeForMissing(StagingDirectorErrorCodes errorCode) {
     log.info("===== Receive rejected Status Message (SM) with code for missing item : successful =====");
@@ -214,7 +226,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
       .orElse(null));
   }
 
-//  @ParameterizedTest
+  @ParameterizedTest
   @EnumSource(value = StagingDirectorErrorCodes.class,
     names = { "INVENTORY_NOT_IN_DATABASE", "SKU_NOT_IN_DATABASE", "INVALID_SKU_FORMAT", "INVENTORY_ALREADY_COMMITTED", "INVENTORY_IS_NOT_AVAILABLE" })
   void shouldSetRetrievalByBarcodeOnStatusMessageWithAnyCode(StagingDirectorErrorCodes errorCode) {
@@ -236,7 +248,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
       .orElse(null));
   }
 
-//  @Test
+  @Test
   void shouldCallReturnItemWhenItemReturnedMessageReceived() {
     log.info("===== Receive Item Returned (IR) and check-in item : successful =====");
     setMessage("IR0000120200101121212697685458679  000");

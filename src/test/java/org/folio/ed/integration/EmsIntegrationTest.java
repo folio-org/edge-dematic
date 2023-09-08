@@ -1,5 +1,8 @@
 package org.folio.ed.integration;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.function.Function.identity;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,10 +18,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.folio.ed.TestBase;
-import org.folio.edge.core.utils.ApiKeyUtils;
 import org.folio.ed.domain.dto.AsrItems;
 import org.folio.ed.domain.dto.AsrRequests;
 import org.folio.ed.domain.dto.UpdateAsrItem;
+import org.folio.edge.core.utils.ApiKeyUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +56,16 @@ public class EmsIntegrationTest extends TestBase {
     lookupAsrRequests = String.format(LOOKUP_ASR_REQUESTS, edgeDematicPort);
     updateAsrStatusBeingRetrieved = String.format(UPDATE_ASR_STATUS_RETRIEVED, edgeDematicPort);
     updateAsrStatusAvailable = String.format(UPDATE_ASR_STATUS_AVAILABLE, edgeDematicPort);
+
+    wireMockServer.stubFor(post(urlEqualTo("/authn/login-with-expiry"))
+      .willReturn(aResponse()
+        .withStatus(HttpStatus.CREATED.value())
+        .withBody("{\"accessTokenExpiration\": \"2030-09-01T13:04:35Z\",\n \"refreshTokenExpiration\": \"2030-09-08T12:54:35Z\"\n}")
+        .withHeader("set-cookie", "folioAccessToken=AAA-BBB-CCC-DDD")
+        .withHeader("Content-Type", "application/json")));
   }
 
-  //@Test
+  @Test
   void getNewAsrItemsTest() throws JsonProcessingException {
     log.info("===== Get items: successful (edge API key in the query parameter) =====");
 
@@ -98,7 +108,7 @@ public class EmsIntegrationTest extends TestBase {
       .getStatus(), is(204));
   }
 
-  //@Test
+  @Test
   void getNewAsrItemsErrorTest() {
     log.info("===== Get items: internal server error =====");
     var headers = getEmptyHeaders();
@@ -107,7 +117,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(exception.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
-  //@Test
+  @Test
   void getAsrRequestsTest() throws JsonProcessingException {
     log.info("===== Get requests: successful (edge API key in the query parameter) =====");
 
@@ -157,7 +167,7 @@ public class EmsIntegrationTest extends TestBase {
       .getStatus(), is(204));
   }
 
-  //@Test
+  @Test
   void getAsrRequestsErrorTest() {
     log.info("===== Get requests: Internal Server Error =====");
 
@@ -167,7 +177,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(exception.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
-  //@Test
+  @Test
   void postAsrItemChekInTest() {
     log.info("===== Post item update (check-in): successful (edge API key in the headers) =====");
 
@@ -175,7 +185,7 @@ public class EmsIntegrationTest extends TestBase {
     updateAsrItem.setItemBarcode("697685458679");
     var headers = getEmptyHeaders();
     headers.put(HttpHeaders.AUTHORIZATION, Collections.singletonList(APIKEY));
-    var responseEntity = post(updateAsrStatusBeingRetrieved + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers,
+    var responseEntity = postCalls(updateAsrStatusBeingRetrieved + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers,
       updateAsrItem, String.class);
     assertThat(responseEntity.getStatusCode(), is(HttpStatus.CREATED));
 
@@ -192,7 +202,7 @@ public class EmsIntegrationTest extends TestBase {
 
   }
 
-  //@Test
+  @Test
   void postAsrItemReturnTest() {
     log.info("===== Post item update (return): successful (edge API key in the headers) =====");
 
@@ -200,7 +210,7 @@ public class EmsIntegrationTest extends TestBase {
     updateAsrItem.setItemBarcode("697685458679");
     var headers = getEmptyHeaders();
     headers.put(HttpHeaders.AUTHORIZATION, Collections.singletonList(APIKEY));
-    var responseEntity = post(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers,
+    var responseEntity = postCalls(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers,
       updateAsrItem, String.class);
     assertThat(responseEntity.getStatusCode(), is(HttpStatus.CREATED));
 
@@ -217,7 +227,7 @@ public class EmsIntegrationTest extends TestBase {
 
   }
 
-  //@Test
+  @Test
   void postAsrItemUpdateErrorTest() {
     log.info("===== Post item update (check-in): Internal Server Error =====");
 
@@ -226,12 +236,12 @@ public class EmsIntegrationTest extends TestBase {
     var headers = getEmptyHeaders();
 
     HttpServerErrorException exception = assertThrows(HttpServerErrorException.class,
-      () -> post(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629?apikey=" + APIKEY, headers, updateAsrItem,
+      () -> postCalls(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629?apikey=" + APIKEY, headers, updateAsrItem,
         String.class));
     assertThat(exception.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
-  //@Test
+  @Test
   void emptyApiKeyGetAsrItemsTest() {
     log.info("===== Get items: empty API key =====");
 
@@ -242,7 +252,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(getException.getStatusCode(), is(HttpStatus.FORBIDDEN));
   }
 
-  //@Test
+  @Test
   void emptyApiKeyPostStatusTest() {
     log.info("===== Post item update (check-in): empty API key =====");
 
@@ -250,11 +260,11 @@ public class EmsIntegrationTest extends TestBase {
     var asrItem = new UpdateAsrItem();
 
     var postException = assertThrows(HttpClientErrorException.class,
-      () -> post(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers, asrItem, String.class));
+      () -> postCalls(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers, asrItem, String.class));
     assertThat(postException.getStatusCode(), is(HttpStatus.FORBIDDEN));
   }
 
-  //@Test
+  @Test
   void invalidApiKeyTest() {
     log.info("===== Get items: invalid API key =====");
 
@@ -262,15 +272,15 @@ public class EmsIntegrationTest extends TestBase {
     var invalidApiKey = ApiKeyUtils.generateApiKey("stagingDirector", "invalid_tenant", "invalid_tenant");
     var exception = assertThrows(HttpClientErrorException.class,
       () -> get(lookupNewAsrItem + "/c7310e5e-c4be-4d8f-943c-faaa35679aaa?apikey=" + invalidApiKey, headers, String.class));
-    assertThat(exception.getStatusCode(), is(HttpStatus.FORBIDDEN));
+    assertThat(exception.getStatusCode(), is(HttpStatus.NOT_FOUND));
   }
 
-  //@Test
+  @Test
   void malformedApiKeyTest() {
     log.info("===== Get items: malformed API key =====");
     var headers = getEmptyHeaders();
     var exception = assertThrows(HttpClientErrorException.class,
       () -> get(lookupNewAsrItem + "/c7310e5e-c4be-4d8f-943c-faaa35679aaa?apikey=1", headers, String.class));
-    assertThat(exception.getStatusCode(), is(HttpStatus.FORBIDDEN));
+    assertThat(exception.getStatusCode(), is(HttpStatus.NOT_FOUND));
   }
 }

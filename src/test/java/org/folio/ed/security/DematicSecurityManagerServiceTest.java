@@ -1,5 +1,8 @@
 package org.folio.ed.security;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -9,13 +12,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.List;
 
 import org.folio.ed.TestBase;
-import org.folio.ed.error.AuthorizationException;
 import org.folio.ed.service.DematicSecurityManagerService;
-import org.folio.edge.core.utils.ApiKeyUtils;
+import org.folio.edge.api.utils.exception.AuthorizationException;
 import org.folio.edgecommonspring.domain.entity.ConnectionSystemParameters;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -35,7 +39,18 @@ public class DematicSecurityManagerServiceTest extends TestBase {
     assertThat(tenants, hasSize(1));
   }
 
-  //@Test
+  @BeforeEach
+  public void setupBeforeEach() {
+    wireMockServer.stubFor(post(urlEqualTo("/authn/login-with-expiry"))
+      .willReturn(aResponse()
+        .withStatus(HttpStatus.CREATED.value())
+        .withBody("{\"accessTokenExpiration\": \"2030-09-01T13:04:35Z\",\n \"refreshTokenExpiration\": \"2030-09-08T12:54:35Z\"\n}")
+        .withHeader("set-cookie", "folioAccessToken=AAA-BBB-CCC-DDD")
+        .withHeader("Content-Type", "application/json")));
+  }
+
+
+  @Test
   void testGetConnectionSystemParametersByTenant() {
     log.info("=== Test: Get connection system parameters by tenantId ===");
 
@@ -44,12 +59,12 @@ public class DematicSecurityManagerServiceTest extends TestBase {
     verifyLoginCall();
   }
 
-  //@Test
+  @Test
   void testInvalidTenant() {
     log.info("=== Test: Get connection system parameters by invalid tenant ===");
     AuthorizationException exception = assertThrows(AuthorizationException.class,
         () -> sms.getStagingDirectorConnectionParameters("invalid-tenant"));
-    assertThat(exception.getMessage(), is("Cannot get system connection properties for: invalid-tenant"));
+    assertThat(exception.getMessage(), is("Cannot get system connection properties for user with name: null, for tenant: invalid-tenant"));
   }
 
 
@@ -67,6 +82,6 @@ public class DematicSecurityManagerServiceTest extends TestBase {
     assertThat(connectionSystemParameters.getTenantId(), is(TEST_TENANT));
     assertThat(connectionSystemParameters.getUsername(), is(TEST_USER));
     assertThat(connectionSystemParameters.getPassword(), is(USER_PASSWORD));
-    assertThat(connectionSystemParameters.getOkapiToken(), is(OKAPI_TOKEN));
+    assertThat(connectionSystemParameters.getOkapiToken().accessToken(), is(OKAPI_TOKEN));
   }
 }

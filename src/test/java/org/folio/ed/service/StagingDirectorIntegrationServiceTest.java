@@ -31,7 +31,7 @@ public class StagingDirectorIntegrationServiceTest extends TestBase {
   @Autowired
   private StagingDirectorIntegrationService integrationService;
 
-  //@Test
+  @Test
   void shouldGetConfigurationAndCreateIntegrationFlows() {
     await().atMost(1, TimeUnit.SECONDS).untilAsserted(() ->
       assertThat(integrationFlowContext.getRegistry().size(), is(6)));
