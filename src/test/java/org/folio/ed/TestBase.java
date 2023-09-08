@@ -1,5 +1,8 @@
 package org.folio.ed;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.Optional.ofNullable;
 import static org.folio.ed.service.DematicSecurityManagerService.SYSTEM_USER_PARAMETERS_CACHE;
 
@@ -14,6 +17,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestTemplate;
@@ -45,6 +49,12 @@ public class TestBase {
   void setUp() {
     ofNullable(cacheManager.getCache(SYSTEM_USER_PARAMETERS_CACHE)).ifPresent(Cache::clear);
     wireMockServer.resetAll();
+    wireMockServer.stubFor(post(urlEqualTo("/authn/login-with-expiry"))
+      .willReturn(aResponse()
+        .withStatus(HttpStatus.CREATED.value())
+        .withBody("{\"accessTokenExpiration\": \"2030-09-01T13:04:35Z\",\n \"refreshTokenExpiration\": \"2030-09-08T12:54:35Z\"\n}")
+        .withHeader("set-cookie", "folioAccessToken=AAA-BBB-CCC-DDD")
+        .withHeader("Content-Type", "application/json")));
   }
 
   @BeforeAll
@@ -53,6 +63,12 @@ public class TestBase {
 
     wireMockServer = new WireMockServer(OKAPI_PORT);
     wireMockServer.start();
+    wireMockServer.stubFor(post(urlEqualTo("/authn/login-with-expiry"))
+        .willReturn(aResponse()
+          .withStatus(HttpStatus.CREATED.value())
+          .withBody("{\"accessTokenExpiration\": \"2030-09-01T13:04:35Z\",\n \"refreshTokenExpiration\": \"2030-09-08T12:54:35Z\"\n}")
+          .withHeader("set-cookie", "folioAccessToken=AAA-BBB-CCC-DDD")
+          .withHeader("Content-Type", "application/json")));
   }
 
   @AfterAll
