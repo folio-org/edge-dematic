@@ -2,23 +2,21 @@ package org.folio.ed.security;
 
 import java.io.IOException;
 
+import org.apache.catalina.connector.RequestFacade;
+import org.apache.commons.lang3.StringUtils;
+import org.folio.ed.domain.entity.RequestWithHeaders;
+import org.folio.ed.error.AuthorizationException;
+import org.folio.ed.util.ApiKeyHelper;
+import org.folio.edgecommonspring.security.SecurityManagerService;
+import org.folio.spring.integration.XOkapiHeaders;
+import org.springframework.stereotype.Component;
+
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-
-import org.apache.catalina.connector.RequestFacade;
-import org.apache.commons.lang3.StringUtils;
-import org.folio.ed.domain.entity.RequestWithHeaders;
-import org.folio.ed.error.AuthorizationException;
-import org.folio.ed.service.DematicSecurityManagerService;
-import org.folio.ed.util.ApiKeyHelper;
-import org.folio.edgecommonspring.security.SecurityManagerService;
-import org.folio.spring.integration.XOkapiHeaders;
-import org.springframework.stereotype.Component;
-
 import lombok.AllArgsConstructor;
 
 @Component

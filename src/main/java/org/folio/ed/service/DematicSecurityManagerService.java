@@ -62,7 +62,6 @@ public class DematicSecurityManagerService {
       .collect(toMap(Function.identity(), tenant -> stagingDirectorClient)));
   }
 
-  @Cacheable(value = SYSTEM_USER_PARAMETERS_CACHE, key = "#tenantId")
   public org.folio.edgecommonspring.domain.entity.ConnectionSystemParameters getStagingDirectorConnectionParameters(String tenantId) {
     return sms.getParamsDependingOnCachePresent(stagingDirectorClient, tenantId, stagingDirectorTenantsUserMap.get(tenantId));
   }
