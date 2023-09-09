@@ -45,23 +45,17 @@ public class DematicSecurityManagerService {
 
   @Value("${staging_director_client}")
   private String stagingDirectorClient;
-
   @Autowired
   private SecurityManagerService sms;
-
   private static final Pattern isURL = Pattern.compile("(?i)^http[s]?://.*");
-  @Autowired
-  private SecureStore secureStore;
-
   private Map<String, String> stagingDirectorTenantsUserMap = new HashMap<>();
-
 
   @PostConstruct
   public void init() {
 
     Properties secureStoreProps = getProperties(secureStorePropsFile);
 
-    secureStore = SecureStoreFactory.getSecureStore(secureStoreType, secureStoreProps);
+    SecureStore secureStore = SecureStoreFactory.getSecureStore(secureStoreType, secureStoreProps);
 
     Optional<String> tenants = SecureTenantsProducer.getTenants(secureStoreProps, secureStore, stagingDirectorTenants);
     tenants.ifPresent(tenantsStr -> stagingDirectorTenantsUserMap = Arrays.stream(COMMA.split(tenantsStr))
