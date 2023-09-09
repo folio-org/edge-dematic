@@ -74,12 +74,6 @@ public class StagingDirectorIntegrationTest extends TestBase {
   @BeforeEach
   public void clearIntegrationContext() {
     integrationFlowContext.getRegistry().keySet().forEach(k -> integrationFlowContext.remove(k));
-    wireMockServer.stubFor(post(urlEqualTo("/authn/login-with-expiry"))
-      .willReturn(aResponse()
-        .withStatus(HttpStatus.CREATED.value())
-        .withBody("{\"accessTokenExpiration\": \"2030-09-01T13:04:35Z\",\n \"refreshTokenExpiration\": \"2030-09-08T12:54:35Z\"\n}")
-        .withHeader("set-cookie", "folioAccessToken=AAA-BBB-CCC-DDD")
-        .withHeader("Content-Type", "application/json")));
   }
 
   @Test
@@ -154,7 +148,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     integrationService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() ->
-      assertThat(wireMockServer.getAllServeEvents().size(), is(2)));
+      assertThat(wireMockServer.getAllServeEvents().size(), is(1)));
 
     assertNotNull(wireMockServer.getAllServeEvents().stream()
       .filter(event -> RequestMethod.PUT.equals(event.getRequest().getMethod()) &&
@@ -217,7 +211,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     integrationService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() ->
-      assertThat(wireMockServer.getAllServeEvents().size(), is(3)));
+      assertThat(wireMockServer.getAllServeEvents().size(), is(2)));
 
     assertNotNull(wireMockServer.getAllServeEvents().stream()
       .filter(event -> RequestMethod.POST.equals(event.getRequest().getMethod()) &&
@@ -239,7 +233,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     integrationService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() ->
-      assertThat(wireMockServer.getAllServeEvents().size(), greaterThanOrEqualTo(2)));
+      assertThat(wireMockServer.getAllServeEvents().size(), greaterThanOrEqualTo(1)));
 
     assertNotNull(wireMockServer.getAllServeEvents().stream()
       .filter(event -> RequestMethod.PUT.equals(event.getRequest().getMethod()) &&

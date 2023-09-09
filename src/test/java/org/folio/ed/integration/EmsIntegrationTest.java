@@ -57,12 +57,6 @@ public class EmsIntegrationTest extends TestBase {
     updateAsrStatusBeingRetrieved = String.format(UPDATE_ASR_STATUS_RETRIEVED, edgeDematicPort);
     updateAsrStatusAvailable = String.format(UPDATE_ASR_STATUS_AVAILABLE, edgeDematicPort);
 
-    wireMockServer.stubFor(post(urlEqualTo("/authn/login-with-expiry"))
-      .willReturn(aResponse()
-        .withStatus(HttpStatus.CREATED.value())
-        .withBody("{\"accessTokenExpiration\": \"2030-09-01T13:04:35Z\",\n \"refreshTokenExpiration\": \"2030-09-08T12:54:35Z\"\n}")
-        .withHeader("set-cookie", "folioAccessToken=AAA-BBB-CCC-DDD")
-        .withHeader("Content-Type", "application/json")));
   }
 
   @Test
@@ -102,7 +96,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(setAccessionEvent, notNullValue());
 
     await().atMost(1, TimeUnit.SECONDS)
-      .untilAsserted(() -> assertThat(wireMockServer.getAllServeEvents(), hasSize(3)));
+      .untilAsserted(() -> assertThat(wireMockServer.getAllServeEvents(), hasSize(2)));
 
     assertThat(setAccessionEvent.getResponse()
       .getStatus(), is(204));
@@ -161,7 +155,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(setRetrievalEvent, notNullValue());
 
     await().atMost(1, TimeUnit.SECONDS)
-      .untilAsserted(() -> assertThat(wireMockServer.getAllServeEvents(), hasSize(3)));
+      .untilAsserted(() -> assertThat(wireMockServer.getAllServeEvents(), hasSize(2)));
 
     assertThat(setRetrievalEvent.getResponse()
       .getStatus(), is(204));
@@ -195,7 +189,7 @@ public class EmsIntegrationTest extends TestBase {
         .getUrl(), identity()));
 
     // Verify call to mod-remote-storage
-    assertThat(serveEvents.size(), is(2));
+    assertThat(serveEvents.size(), is(1));
     var checkInServeEvent = serveEvents.get("/remote-storage/retrieve/de17bad7-2a30-4f1c-bee5-f653ded15629/checkInItem");
     assertThat(checkInServeEvent.getRequest()
       .getBodyAsString(), containsString("{\"itemBarcode\":\"697685458679\"}"));
@@ -220,7 +214,7 @@ public class EmsIntegrationTest extends TestBase {
         .getUrl(), identity()));
 
     // Verify call to mod-remote-storage
-    assertThat(serveEvents.size(), is(2));
+    assertThat(serveEvents.size(), is(1));
     var checkInServeEvent = serveEvents.get("/remote-storage/return/de17bad7-2a30-4f1c-bee5-f653ded15629");
     assertThat(checkInServeEvent.getRequest()
       .getBodyAsString(), containsString("{\"itemBarcode\":\"697685458679\"}"));

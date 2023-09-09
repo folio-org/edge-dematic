@@ -49,18 +49,11 @@ public class TestBase {
   void setUp() {
     ofNullable(cacheManager.getCache(SYSTEM_USER_PARAMETERS_CACHE)).ifPresent(Cache::clear);
     wireMockServer.resetAll();
-    wireMockServer.stubFor(post(urlEqualTo("/authn/login-with-expiry"))
-      .willReturn(aResponse()
-        .withStatus(HttpStatus.CREATED.value())
-        .withBody("{\"accessTokenExpiration\": \"2030-09-01T13:04:35Z\",\n \"refreshTokenExpiration\": \"2030-09-08T12:54:35Z\"\n}")
-        .withHeader("set-cookie", "folioAccessToken=AAA-BBB-CCC-DDD")
-        .withHeader("Content-Type", "application/json")));
   }
 
   @BeforeAll
   static void testSetup() {
     restTemplate = new RestTemplate();
-
     wireMockServer = new WireMockServer(OKAPI_PORT);
     wireMockServer.start();
     wireMockServer.stubFor(post(urlEqualTo("/authn/login-with-expiry"))

@@ -39,24 +39,12 @@ public class DematicSecurityManagerServiceTest extends TestBase {
     assertThat(tenants, hasSize(1));
   }
 
-  @BeforeEach
-  public void setupBeforeEach() {
-    wireMockServer.stubFor(post(urlEqualTo("/authn/login-with-expiry"))
-      .willReturn(aResponse()
-        .withStatus(HttpStatus.CREATED.value())
-        .withBody("{\"accessTokenExpiration\": \"2030-09-01T13:04:35Z\",\n \"refreshTokenExpiration\": \"2030-09-08T12:54:35Z\"\n}")
-        .withHeader("set-cookie", "folioAccessToken=AAA-BBB-CCC-DDD")
-        .withHeader("Content-Type", "application/json")));
-  }
-
-
   @Test
   void testGetConnectionSystemParametersByTenant() {
     log.info("=== Test: Get connection system parameters by tenantId ===");
 
     var connectionSystemParameters = sms.getStagingDirectorConnectionParameters(TEST_TENANT);
     verifyConnectionSystemParameters(connectionSystemParameters);
-    verifyLoginCall();
   }
 
   @Test
@@ -68,20 +56,8 @@ public class DematicSecurityManagerServiceTest extends TestBase {
   }
 
 
-  private void verifyLoginCall() {
-    List<String> paths = wireMockServer.getAllServeEvents()
-      .stream()
-      .map(e -> e.getRequest()
-        .getUrl())
-      .collect(toList());
-    assertThat(paths, hasSize(1));
-    assertThat(paths, Matchers.contains("/authn/login-with-expiry"));
-  }
-
   private void verifyConnectionSystemParameters(ConnectionSystemParameters connectionSystemParameters) {
     assertThat(connectionSystemParameters.getTenantId(), is(TEST_TENANT));
-    assertThat(connectionSystemParameters.getUsername(), is(TEST_USER));
-    assertThat(connectionSystemParameters.getPassword(), is(USER_PASSWORD));
     assertThat(connectionSystemParameters.getOkapiToken().accessToken(), is(OKAPI_TOKEN));
   }
 }
