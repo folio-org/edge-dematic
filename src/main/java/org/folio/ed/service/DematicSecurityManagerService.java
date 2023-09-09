@@ -15,6 +15,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 import org.folio.ed.error.AuthorizationException;
 import org.folio.ed.security.SecureStoreFactory;
 import org.folio.ed.security.SecureTenantsProducer;
@@ -47,7 +49,8 @@ public class DematicSecurityManagerService {
   private String stagingDirectorClient;
   @Autowired
   private SecurityManagerService sms;
-  private static final Pattern isURL = Pattern.compile("(?i)^http[s]?://.*");
+  private static final Pattern isURL = Pattern.compile("(?i)^https?://.*");
+
   private Map<String, String> stagingDirectorTenantsUserMap = new HashMap<>();
 
   @PostConstruct
