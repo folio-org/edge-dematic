@@ -28,6 +28,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.Resource;
 import lombok.extern.log4j.Log4j2;
 
 @Component
@@ -50,8 +51,8 @@ public class DematicSecurityManagerService {
   @Autowired
   private SecurityManagerService sms;
   private static final Pattern isURL = Pattern.compile("(?i)^https?://.*");
-
-  private Map<String, String> stagingDirectorTenantsUserMap = new HashMap<>();
+  @Resource(name="stagingDirectorTenantsUserMap")
+  private Map<String, String> stagingDirectorTenantsUserMap;
 
   @PostConstruct
   public void init() {

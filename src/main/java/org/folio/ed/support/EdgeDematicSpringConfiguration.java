@@ -1,5 +1,8 @@
 package org.folio.ed.support;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.folio.ed.util.StagingDirectorSerializerDeserializer;
 import org.folio.spring.liquibase.FolioSpringLiquibase;
 import org.springframework.context.annotation.Bean;
@@ -22,5 +25,10 @@ public class EdgeDematicSpringConfiguration {
   @Bean
   public JdbcTemplate jdbcTemplate() {
     return new JdbcTemplate(new SingleConnectionDataSource());
+  }
+
+  @Bean(name="stagingDirectorTenantsUserMap")
+  public Map<String, String> stagingDirectorTenantsUserMap() {
+    return new HashMap<>();
   }
 }
