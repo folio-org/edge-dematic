@@ -15,8 +15,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import jakarta.annotation.PostConstruct;
-
 import org.folio.ed.error.AuthorizationException;
 import org.folio.ed.security.SecureStoreFactory;
 import org.folio.ed.security.SecureTenantsProducer;
@@ -27,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import lombok.extern.log4j.Log4j2;
 
 @Component
@@ -51,7 +50,7 @@ public class DematicSecurityManagerService {
   private SecurityManagerService sms;
 
   private static final Pattern isURL = Pattern.compile("(?i)^http[s]?://.*");
-
+  @Autowired
   private SecureStore secureStore;
 
   private Map<String, String> stagingDirectorTenantsUserMap = new HashMap<>();
@@ -72,7 +71,6 @@ public class DematicSecurityManagerService {
   @Cacheable(value = SYSTEM_USER_PARAMETERS_CACHE, key = "#tenantId")
   public org.folio.edgecommonspring.domain.entity.ConnectionSystemParameters getStagingDirectorConnectionParameters(String tenantId) {
     return sms.getParamsDependingOnCachePresent(stagingDirectorClient, tenantId, stagingDirectorTenantsUserMap.get(tenantId));
-    //return enrichConnectionSystemParametersWithOkapiToken(stagingDirectorClient, tenantId, stagingDirectorTenantsUserMap.get(tenantId));
   }
 
 
