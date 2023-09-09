@@ -7,7 +7,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
@@ -15,7 +14,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import javax.inject.Inject;
+import javax.annotation.Resource;
 
 import org.folio.ed.error.AuthorizationException;
 import org.folio.ed.security.SecureStoreFactory;
@@ -24,11 +23,9 @@ import org.folio.edge.core.security.SecureStore;
 import org.folio.edgecommonspring.security.SecurityManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
 import lombok.extern.log4j.Log4j2;
 
 @Component
