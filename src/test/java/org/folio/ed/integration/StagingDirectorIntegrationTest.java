@@ -1,9 +1,12 @@
 package org.folio.ed.integration;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.function.Function.identity;
 import static org.awaitility.Awaitility.await;
-import static org.folio.ed.security.SecurityManagerServiceTest.OKAPI_TOKEN;
+import static org.folio.ed.security.DematicSecurityManagerServiceTest.OKAPI_TOKEN;
 import static org.folio.ed.support.ServerMessageHelper.setMessage;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -15,17 +18,18 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Mockito.verify;
 
-import com.github.tomakehurst.wiremock.http.RequestMethod;
-import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
-import lombok.extern.log4j.Log4j2;
+import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 import org.folio.ed.TestBase;
+import org.folio.ed.config.MockServerConfig;
+import org.folio.ed.domain.dto.Configuration;
+import org.folio.ed.handler.PrimaryChannelHandler;
+import org.folio.ed.handler.StatusChannelHandler;
 import org.folio.ed.service.RemoteStorageService;
 import org.folio.ed.service.StagingDirectorIntegrationService;
 import org.folio.ed.support.ServerMessageHandler;
-import org.folio.ed.domain.dto.Configuration;
-import org.folio.ed.config.MockServerConfig;
-import org.folio.ed.handler.PrimaryChannelHandler;
-import org.folio.ed.handler.StatusChannelHandler;
 import org.folio.ed.util.StagingDirectorErrorCodes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,11 +39,13 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpStatus;
 import org.springframework.integration.dsl.context.IntegrationFlowContext;
 
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import com.github.tomakehurst.wiremock.http.RequestMethod;
+import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
+
+import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Import(MockServerConfig.class)
@@ -142,7 +148,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     integrationService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() ->
-      assertThat(wireMockServer.getAllServeEvents().size(), is(2)));
+      assertThat(wireMockServer.getAllServeEvents().size(), is(1)));
 
     assertNotNull(wireMockServer.getAllServeEvents().stream()
       .filter(event -> RequestMethod.PUT.equals(event.getRequest().getMethod()) &&
@@ -205,7 +211,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     integrationService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() ->
-      assertThat(wireMockServer.getAllServeEvents().size(), is(3)));
+      assertThat(wireMockServer.getAllServeEvents().size(), is(2)));
 
     assertNotNull(wireMockServer.getAllServeEvents().stream()
       .filter(event -> RequestMethod.POST.equals(event.getRequest().getMethod()) &&
@@ -227,7 +233,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     integrationService.registerStatusChannelFlow(configuration);
 
     await().atMost(1, SECONDS).untilAsserted(() ->
-      assertThat(wireMockServer.getAllServeEvents().size(), greaterThanOrEqualTo(2)));
+      assertThat(wireMockServer.getAllServeEvents().size(), greaterThanOrEqualTo(1)));
 
     assertNotNull(wireMockServer.getAllServeEvents().stream()
       .filter(event -> RequestMethod.PUT.equals(event.getRequest().getMethod()) &&

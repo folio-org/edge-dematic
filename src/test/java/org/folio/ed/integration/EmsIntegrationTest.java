@@ -1,5 +1,8 @@
 package org.folio.ed.integration;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.function.Function.identity;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -15,10 +18,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.folio.ed.TestBase;
-import org.folio.edge.core.utils.ApiKeyUtils;
 import org.folio.ed.domain.dto.AsrItems;
 import org.folio.ed.domain.dto.AsrRequests;
 import org.folio.ed.domain.dto.UpdateAsrItem;
+import org.folio.edge.core.utils.ApiKeyUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +56,7 @@ public class EmsIntegrationTest extends TestBase {
     lookupAsrRequests = String.format(LOOKUP_ASR_REQUESTS, edgeDematicPort);
     updateAsrStatusBeingRetrieved = String.format(UPDATE_ASR_STATUS_RETRIEVED, edgeDematicPort);
     updateAsrStatusAvailable = String.format(UPDATE_ASR_STATUS_AVAILABLE, edgeDematicPort);
+
   }
 
   @Test
@@ -92,7 +96,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(setAccessionEvent, notNullValue());
 
     await().atMost(1, TimeUnit.SECONDS)
-      .untilAsserted(() -> assertThat(wireMockServer.getAllServeEvents(), hasSize(3)));
+      .untilAsserted(() -> assertThat(wireMockServer.getAllServeEvents(), hasSize(2)));
 
     assertThat(setAccessionEvent.getResponse()
       .getStatus(), is(204));
@@ -151,7 +155,7 @@ public class EmsIntegrationTest extends TestBase {
     assertThat(setRetrievalEvent, notNullValue());
 
     await().atMost(1, TimeUnit.SECONDS)
-      .untilAsserted(() -> assertThat(wireMockServer.getAllServeEvents(), hasSize(3)));
+      .untilAsserted(() -> assertThat(wireMockServer.getAllServeEvents(), hasSize(2)));
 
     assertThat(setRetrievalEvent.getResponse()
       .getStatus(), is(204));
@@ -175,7 +179,7 @@ public class EmsIntegrationTest extends TestBase {
     updateAsrItem.setItemBarcode("697685458679");
     var headers = getEmptyHeaders();
     headers.put(HttpHeaders.AUTHORIZATION, Collections.singletonList(APIKEY));
-    var responseEntity = post(updateAsrStatusBeingRetrieved + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers,
+    var responseEntity = postCalls(updateAsrStatusBeingRetrieved + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers,
       updateAsrItem, String.class);
     assertThat(responseEntity.getStatusCode(), is(HttpStatus.CREATED));
 
@@ -185,7 +189,7 @@ public class EmsIntegrationTest extends TestBase {
         .getUrl(), identity()));
 
     // Verify call to mod-remote-storage
-    assertThat(serveEvents.size(), is(2));
+    assertThat(serveEvents.size(), is(1));
     var checkInServeEvent = serveEvents.get("/remote-storage/retrieve/de17bad7-2a30-4f1c-bee5-f653ded15629/checkInItem");
     assertThat(checkInServeEvent.getRequest()
       .getBodyAsString(), containsString("{\"itemBarcode\":\"697685458679\"}"));
@@ -200,7 +204,7 @@ public class EmsIntegrationTest extends TestBase {
     updateAsrItem.setItemBarcode("697685458679");
     var headers = getEmptyHeaders();
     headers.put(HttpHeaders.AUTHORIZATION, Collections.singletonList(APIKEY));
-    var responseEntity = post(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers,
+    var responseEntity = postCalls(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers,
       updateAsrItem, String.class);
     assertThat(responseEntity.getStatusCode(), is(HttpStatus.CREATED));
 
@@ -210,7 +214,7 @@ public class EmsIntegrationTest extends TestBase {
         .getUrl(), identity()));
 
     // Verify call to mod-remote-storage
-    assertThat(serveEvents.size(), is(2));
+    assertThat(serveEvents.size(), is(1));
     var checkInServeEvent = serveEvents.get("/remote-storage/return/de17bad7-2a30-4f1c-bee5-f653ded15629");
     assertThat(checkInServeEvent.getRequest()
       .getBodyAsString(), containsString("{\"itemBarcode\":\"697685458679\"}"));
@@ -226,7 +230,7 @@ public class EmsIntegrationTest extends TestBase {
     var headers = getEmptyHeaders();
 
     HttpServerErrorException exception = assertThrows(HttpServerErrorException.class,
-      () -> post(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629?apikey=" + APIKEY, headers, updateAsrItem,
+      () -> postCalls(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629?apikey=" + APIKEY, headers, updateAsrItem,
         String.class));
     assertThat(exception.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
   }
@@ -250,7 +254,7 @@ public class EmsIntegrationTest extends TestBase {
     var asrItem = new UpdateAsrItem();
 
     var postException = assertThrows(HttpClientErrorException.class,
-      () -> post(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers, asrItem, String.class));
+      () -> postCalls(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers, asrItem, String.class));
     assertThat(postException.getStatusCode(), is(HttpStatus.FORBIDDEN));
   }
 
@@ -262,7 +266,7 @@ public class EmsIntegrationTest extends TestBase {
     var invalidApiKey = ApiKeyUtils.generateApiKey("stagingDirector", "invalid_tenant", "invalid_tenant");
     var exception = assertThrows(HttpClientErrorException.class,
       () -> get(lookupNewAsrItem + "/c7310e5e-c4be-4d8f-943c-faaa35679aaa?apikey=" + invalidApiKey, headers, String.class));
-    assertThat(exception.getStatusCode(), is(HttpStatus.FORBIDDEN));
+    assertThat(exception.getStatusCode(), is(HttpStatus.NOT_FOUND));
   }
 
   @Test
@@ -271,6 +275,6 @@ public class EmsIntegrationTest extends TestBase {
     var headers = getEmptyHeaders();
     var exception = assertThrows(HttpClientErrorException.class,
       () -> get(lookupNewAsrItem + "/c7310e5e-c4be-4d8f-943c-faaa35679aaa?apikey=1", headers, String.class));
-    assertThat(exception.getStatusCode(), is(HttpStatus.FORBIDDEN));
+    assertThat(exception.getStatusCode(), is(HttpStatus.NOT_FOUND));
   }
 }

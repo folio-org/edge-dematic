@@ -3,7 +3,7 @@
     {
       "request": {
         "method": "POST",
-        "url": "/authn/login",
+        "url": "/authn/login-with-expiry",
         "headers" : {
           "x-okapi-tenant": {
             "equalTo": "test_tenant"
@@ -21,9 +21,9 @@
     {
       "request": {
         "method": "POST",
-        "url": "/authn/login",
+        "url": "/authn/login-with-expiry",
         "bodyPatterns" : [ {
-          "equalToJson" : "{  \n   \"username\":\"non_existed_user\",\n   \"password\":\"failed_password\"\n}"
+          "equalToJson" : "{  \n   \"username\":\"stagingDirector\",\n   \"password\":\"password\"\n}"
         } ]
       },
       "response": {

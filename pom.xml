@@ -30,6 +30,7 @@
     <openapi-generator.version>6.2.1</openapi-generator.version>
     <mapstruct.version>1.5.3.Final</mapstruct.version>
     <wiremock.version>2.27.2</wiremock.version>
+    <edge-common-spring.version>2.3.0-SNAPSHOT</edge-common-spring.version>
 
     <!--Plugin properties-->
     <maven-clean-plugin.version>3.2.0</maven-clean-plugin.version>
@@ -46,6 +47,11 @@
   </properties>
 
   <dependencies>
+    <dependency>
+      <groupId>org.folio</groupId>
+      <artifactId>edge-common-spring</artifactId>
+      <version>${edge-common-spring.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.folio</groupId>
       <artifactId>folio-spring-base</artifactId>

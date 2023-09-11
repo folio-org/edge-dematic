@@ -9,7 +9,7 @@ import static org.folio.ed.util.StagingDirectorMessageHelper.resolveMessageType;
 import lombok.RequiredArgsConstructor;
 import org.folio.ed.domain.dto.Configuration;
 import org.folio.ed.service.RemoteStorageService;
-import org.folio.ed.service.SecurityManagerService;
+import org.folio.ed.service.DematicSecurityManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -25,7 +25,7 @@ public class PrimaryChannelHandler {
   private final Map<String, String> picksMap = new HashMap<>();
 
   private final RemoteStorageService remoteStorageService;
-  private final SecurityManagerService sms;
+  private final DematicSecurityManagerService sms;
 
   public Object handle(String payload, Configuration configuration) {
     LOGGER.info("Primary channel handler income: \"{}\"", payload);
@@ -39,7 +39,7 @@ public class PrimaryChannelHandler {
         var tenantId = configuration.getTenantId();
         remoteStorageService.setRetrievedAsync(picksMap.get(configId), tenantId,
           sms.getStagingDirectorConnectionParameters(tenantId)
-          .getOkapiToken());
+          .getOkapiToken().accessToken());
         picksMap.remove(configId);
       }
       return null;
