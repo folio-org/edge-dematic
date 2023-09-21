@@ -31,14 +31,11 @@ public class FeedbackChannelHandler {
       switch (errorCode) {
         case INVENTORY_IS_AVAILABLE:
           return buildPickRequestMessage(remoteStorageService.getRetrievalByBarcode(extractBarcode(payload), configuration.getId()));
-        case INVENTORY_NOT_IN_DATABASE:
-        case SKU_NOT_IN_DATABASE:
-        case INVALID_SKU_FORMAT:
+        case INVENTORY_NOT_IN_DATABASE, SKU_NOT_IN_DATABASE, INVALID_SKU_FORMAT:
           remoteStorageService.markItemAsMissingAsync(extractBarcode(payload), tenantId, okapiToken);
           remoteStorageService.setRetrievedAsync(extractBarcode(payload), tenantId, okapiToken);
           return null;
-        case INVENTORY_ALREADY_COMMITTED:
-        case INVENTORY_IS_NOT_AVAILABLE:
+        case INVENTORY_ALREADY_COMMITTED, INVENTORY_IS_NOT_AVAILABLE, DUPLICATE_MESSAGE:
           remoteStorageService.setRetrievedAsync(extractBarcode(payload), tenantId, okapiToken);
           return null;
         default:

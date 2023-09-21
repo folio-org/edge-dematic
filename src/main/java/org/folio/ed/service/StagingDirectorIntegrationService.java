@@ -6,8 +6,7 @@ import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolveAddre
 import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolvePollingTimeFrame;
 import static org.folio.ed.util.StagingDirectorConfigurationsHelper.resolvePort;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import java.time.LocalDateTime;
 
 import org.folio.ed.domain.dto.Configuration;
 import org.folio.ed.handler.FeedbackChannelHandler;
@@ -29,7 +28,8 @@ import org.springframework.integration.ip.tcp.connection.TcpConnectionOpenEvent;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
-import java.time.LocalDateTime;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 @Service
 @RequiredArgsConstructor

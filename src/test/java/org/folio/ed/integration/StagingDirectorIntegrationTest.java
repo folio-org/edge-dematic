@@ -49,7 +49,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Import(MockServerConfig.class)
-public class StagingDirectorIntegrationTest extends TestBase {
+ class StagingDirectorIntegrationTest extends TestBase {
   private static final Pattern HEARTBEAT_PATTERN = Pattern.compile("HM\\d{19}");
   private static final Pattern TRANSACTION_RESPONSE_PATTERN = Pattern.compile("TR\\d{19}000");
 
@@ -222,7 +222,8 @@ public class StagingDirectorIntegrationTest extends TestBase {
 
   @ParameterizedTest
   @EnumSource(value = StagingDirectorErrorCodes.class,
-    names = { "INVENTORY_NOT_IN_DATABASE", "SKU_NOT_IN_DATABASE", "INVALID_SKU_FORMAT", "INVENTORY_ALREADY_COMMITTED", "INVENTORY_IS_NOT_AVAILABLE" })
+    names = { "INVENTORY_NOT_IN_DATABASE", "SKU_NOT_IN_DATABASE", "INVALID_SKU_FORMAT", "INVENTORY_ALREADY_COMMITTED",
+      "INVENTORY_IS_NOT_AVAILABLE", "DUPLICATE_MESSAGE" })
   void shouldSetRetrievalByBarcodeOnStatusMessageWithAnyCode(StagingDirectorErrorCodes errorCode) {
     log.info("===== Receive rejected Status Message (SM) with any code : successful =====");
     Configuration configuration = buildConfiguration();
