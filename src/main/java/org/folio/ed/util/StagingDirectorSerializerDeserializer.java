@@ -29,9 +29,15 @@ public class StagingDirectorSerializerDeserializer implements Serializer<String>
     int bite;
     for (int i = 0; i < length; ++i) {
       bite = inputStream.read();
+      checkClosure(bite);
       builder.append((char)bite);
     }
 
     return builder.toString();
+  }
+  private void checkClosure(int bite) throws IOException {
+    if (bite < 0) {
+      throw new IOException("Socket closed during message assembly");
+    }
   }
 }
