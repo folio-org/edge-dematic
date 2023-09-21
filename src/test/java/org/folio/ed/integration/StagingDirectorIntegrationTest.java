@@ -49,7 +49,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Import(MockServerConfig.class)
- class StagingDirectorIntegrationTest extends TestBase {
+public class StagingDirectorIntegrationTest extends TestBase {
   private static final Pattern HEARTBEAT_PATTERN = Pattern.compile("HM\\d{19}");
   private static final Pattern TRANSACTION_RESPONSE_PATTERN = Pattern.compile("TR\\d{19}000");
 
