@@ -222,7 +222,8 @@ public class StagingDirectorIntegrationTest extends TestBase {
 
   @ParameterizedTest
   @EnumSource(value = StagingDirectorErrorCodes.class,
-    names = { "INVENTORY_NOT_IN_DATABASE", "SKU_NOT_IN_DATABASE", "INVALID_SKU_FORMAT", "INVENTORY_ALREADY_COMMITTED", "INVENTORY_IS_NOT_AVAILABLE" })
+    names = { "INVENTORY_NOT_IN_DATABASE", "SKU_NOT_IN_DATABASE", "INVALID_SKU_FORMAT", "INVENTORY_ALREADY_COMMITTED",
+      "INVENTORY_IS_NOT_AVAILABLE", "DUPLICATE_MESSAGE" })
   void shouldSetRetrievalByBarcodeOnStatusMessageWithAnyCode(StagingDirectorErrorCodes errorCode) {
     log.info("===== Receive rejected Status Message (SM) with any code : successful =====");
     Configuration configuration = buildConfiguration();

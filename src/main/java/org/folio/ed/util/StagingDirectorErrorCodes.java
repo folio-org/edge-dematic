@@ -10,7 +10,8 @@ public enum StagingDirectorErrorCodes {
   SKU_ALREADY_IN_DATABASE("008"),
   SKU_HAS_INVENTORY("009"),
   INVENTORY_IS_NOT_AVAILABLE("010"),
-  SKU_HAS_WORK("011");
+  SKU_HAS_WORK("011"),
+  DUPLICATE_MESSAGE("014");
 
   private String value;
 
