@@ -1,3 +1,12 @@
+## 2.1.0 2023-10-12
+
+* [EDGDEMATIC-85](https://issues.folio.org/browse/EDGDEMATIC-85) - Migrate to folio-spring-support v7.0.0
+* [EDGDEMATIC-77](https://issues.folio.org/browse/EDGDEMATIC-77) - Logging improvement - Configuration
+* [EDGDEMATIC-78](https://issues.folio.org/browse/EDGDEMATIC-78) - Update to Java 17
+* [EDGDEMATIC-79](https://issues.folio.org/browse/EDGDEMATIC-79) - Update the module to Spring boot v3.0.0 and identify issues
+* [EDGDEMATIC-81](https://issues.folio.org/browse/EDGDEMATIC-81) - Failed accessioning due to missing pick request - Dematic
+* [EDGDEMATIC-84](https://issues.folio.org/browse/EDGDEMATIC-84) -Build failing due to dependency issue
+
 ## 2.0.0 2023-02-23
 
 * [EDGDEMATIC-61](https://issues.folio.org/browse/EDGDEMATIC-61) - Logging improvement
