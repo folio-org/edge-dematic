@@ -1,11 +1,12 @@
 ## 2.1.0 2023-10-12
 
 * [EDGDEMATIC-85](https://issues.folio.org/browse/EDGDEMATIC-85) - Migrate to folio-spring-support v7.0.0
-* [EDGDEMATIC-77](https://issues.folio.org/browse/EDGDEMATIC-77) - Logging improvement - Configuration
-* [EDGDEMATIC-78](https://issues.folio.org/browse/EDGDEMATIC-78) - Update to Java 17
-* [EDGDEMATIC-79](https://issues.folio.org/browse/EDGDEMATIC-79) - Update the module to Spring boot v3.0.0 and identify issues
-* [EDGDEMATIC-81](https://issues.folio.org/browse/EDGDEMATIC-81) - Failed accessioning due to missing pick request - Dematic
-* [EDGDEMATIC-84](https://issues.folio.org/browse/EDGDEMATIC-84) -Build failing due to dependency issue
+* [EDGDEMATIC-87](https://issues.folio.org/browse/EDGDEMATIC-87) - Enable API-related GitHub Workflows, replace those Jenkins stages
+* [EDGDEMATIC-88](https://issues.folio.org/browse/EDGDEMATIC-88) - Edge-dematic module not started properly.
+* [EDGDEMATIC-90](https://issues.folio.org/browse/EDGDEMATIC-90) - Release: edge-dematic
+* [EDGDEMATIC-91](https://issues.folio.org/browse/EDGDEMATIC-91) - Implement RTR
+* [EDGDEMATIC-89](https://issues.folio.org/browse/EDGDEMATIC-89) -Disruptions in communication between StagingDirector and FOLIO
+* [EDGDEMATIC-94](https://issues.folio.org/browse/EDGDEMATIC-94) -Upgrade to Spring Boot 3.1 and folio-spring-support 7.2
 
 ## 2.0.0 2023-02-23
 
