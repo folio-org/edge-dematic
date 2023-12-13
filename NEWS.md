@@ -1,3 +1,7 @@
+## 2.1.1 2023-12-13
+
+* [EDGDEMATIC-95](https://issues.folio.org/browse/EDGDEMATIC-95) - Spring Boot 3.1.6 fixing Denial of Service (DoS)
+
 ## 2.1.0 2023-10-12
 
 * [EDGDEMATIC-85](https://issues.folio.org/browse/EDGDEMATIC-85) - Migrate to folio-spring-support v7.0.0
