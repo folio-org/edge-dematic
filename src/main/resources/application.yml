@@ -35,6 +35,7 @@ feign:
 folio:
   system-user:
     username: ${SYSTEM_USER_NAME:system-user}
+    password: dummy # This isn't actually used, but we get dependency injection errors from folio-spring-system-user if we don't have it
   environment: ${ENV:folio}
 
 logging:

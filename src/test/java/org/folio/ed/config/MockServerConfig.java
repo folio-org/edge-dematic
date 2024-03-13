@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.Transformers;
 import org.springframework.integration.event.inbound.ApplicationEventListeningMessageProducer;
 import org.springframework.integration.ip.IpHeaders;
@@ -39,7 +38,7 @@ public class MockServerConfig {
 
   @Bean
   public IntegrationFlow primaryChannelFlow() {
-    return IntegrationFlows
+    return IntegrationFlow
       .from(Tcp.inboundGateway(primaryChannelFactory()))
       .handle(String.class, serverMessageHandler())
       .get();
@@ -62,7 +61,7 @@ public class MockServerConfig {
 
   @Bean
   public IntegrationFlow statusChannelOutboundFlow() {
-    return IntegrationFlows.from(eventsProducer())
+    return IntegrationFlow.from(eventsProducer())
       .transform(e -> MessageBuilder.withPayload(getMessage())
         .setHeader(IpHeaders.CONNECTION_ID, ((TcpConnectionOpenEvent) e).getConnectionId()).build())
       .handle(Tcp.outboundAdapter(statusChannelFactory()))
@@ -71,7 +70,7 @@ public class MockServerConfig {
 
   @Bean
   public IntegrationFlow statusChannelInboundFlow() {
-    return IntegrationFlows.from(Tcp.inboundAdapter(statusChannelFactory()))
+    return IntegrationFlow.from(Tcp.inboundAdapter(statusChannelFactory()))
       .transform(Transformers.objectToString())
       .handle(String.class, serverMessageHandler())
       .get();
