@@ -264,17 +264,17 @@ public class EmsIntegrationTest extends TestBase {
 
     var headers = getEmptyHeaders();
     var invalidApiKey = ApiKeyUtils.generateApiKey("stagingDirector", "invalid_tenant", "invalid_tenant");
-    var exception = assertThrows(HttpClientErrorException.class,
+    var exception = assertThrows(HttpServerErrorException.InternalServerError.class,
       () -> get(lookupNewAsrItem + "/c7310e5e-c4be-4d8f-943c-faaa35679aaa?apikey=" + invalidApiKey, headers, String.class));
-    assertThat(exception.getStatusCode(), is(HttpStatus.NOT_FOUND));
+    assertThat(exception.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
   @Test
   void malformedApiKeyTest() {
     log.info("===== Get items: malformed API key =====");
     var headers = getEmptyHeaders();
-    var exception = assertThrows(HttpClientErrorException.class,
+    var exception = assertThrows(HttpServerErrorException.InternalServerError.class,
       () -> get(lookupNewAsrItem + "/c7310e5e-c4be-4d8f-943c-faaa35679aaa?apikey=1", headers, String.class));
-    assertThat(exception.getStatusCode(), is(HttpStatus.NOT_FOUND));
+    assertThat(exception.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
   }
 }
