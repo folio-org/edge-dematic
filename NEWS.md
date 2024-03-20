@@ -1,3 +1,9 @@
+## 2.2.0 2024-03-20
+
+* [EDGDEMATIC-95](https://issues.folio.org/browse/EDGDEMATIC-95) - Spring Boot 3.1.6 fixing Denial of Service (DoS)
+* [EDGDEMATIC-97] - Upgrade versions in pom for Q release.
+
+
 ## 2.1.1 2023-12-13
 
 * [EDGDEMATIC-95](https://issues.folio.org/browse/EDGDEMATIC-95) - Spring Boot 3.1.6 fixing Denial of Service (DoS)
