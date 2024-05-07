@@ -55,6 +55,14 @@ public class RemoteStorageService {
       .findAny().orElse(null);
   }
 
+
+  public void removeBarcodeFromMap(String barcode, String configId) {
+    log.debug("removeBarcodeFromMap :: barcode:{} configId:{}", barcode, configId);
+    List<RetrievalQueueRecord> retrievals = retrievalsMap.getOrDefault(configId, Collections.emptyList());
+    retrievals.removeIf(record -> barcode.equals(record.getItemBarcode()));
+    retrievalsMap.put(configId, retrievals);
+  }
+
   public List<Configuration> getStagingDirectorConfigurations(String tenantId, String okapiToken) {
     log.debug("getStagingDirectorConfigurations :: tenantId:{}",tenantId);
     List<Configuration> stagingDirectorConfigurations = new ArrayList<>();

@@ -30,6 +30,10 @@ public class FeedbackChannelHandler {
       var errorCode = extractErrorCode(payload);
       switch (errorCode) {
         case INVENTORY_IS_AVAILABLE:
+//          return buildPickRequestMessage(remoteStorageService.getRetrievalQueueRecords(
+//            configuration.getId(), configuration.getTenantId(), okapiToken).stream()
+//            .filter(record -> extractBarcode(payload).equals(record.getItemBarcode()))
+//            .findAny().orElse(null));
           return buildPickRequestMessage(remoteStorageService.getRetrievalByBarcode(extractBarcode(payload), configuration.getId()));
         case INVENTORY_NOT_IN_DATABASE, SKU_NOT_IN_DATABASE, INVALID_SKU_FORMAT:
           remoteStorageService.markItemAsMissingAsync(extractBarcode(payload), tenantId, okapiToken);

@@ -4,6 +4,7 @@ import static java.util.Objects.nonNull;
 import static org.folio.ed.util.MessageTypes.PICK_REQUEST;
 import static org.folio.ed.util.MessageTypes.TRANSACTION_RESPONSE;
 import static org.folio.ed.util.StagingDirectorMessageHelper.extractBarcode;
+import static org.folio.ed.util.StagingDirectorMessageHelper.extractTransactionNumber;
 import static org.folio.ed.util.StagingDirectorMessageHelper.resolveMessageType;
 
 import lombok.RequiredArgsConstructor;
@@ -31,16 +32,19 @@ public class PrimaryChannelHandler {
     LOGGER.info("Primary channel handler income: \"{}\"", payload);
     var configId = configuration.getId();
     if (resolveMessageType(payload) == PICK_REQUEST) {
-      picksMap.put(configId, extractBarcode(payload));
+      var tranNu = extractTransactionNumber(payload);
+      picksMap.put(tranNu, extractBarcode(payload));
     }
     if (resolveMessageType(payload) == TRANSACTION_RESPONSE) {
       remoteStorageService.updateLastMessageTime(configId);
-      if (nonNull(picksMap.get(configId))) {
+      var barcode = picksMap.get(extractTransactionNumber(payload));
+      if (nonNull(barcode)) {
         var tenantId = configuration.getTenantId();
-        remoteStorageService.setRetrievedAsync(picksMap.get(configId), tenantId,
+        remoteStorageService.setRetrievedAsync(picksMap.get(barcode), tenantId,
           sms.getStagingDirectorConnectionParameters(tenantId)
-          .getOkapiToken().accessToken());
-        picksMap.remove(configId);
+          .getOkapiToken().accessToken()); // here map is sending incorrect barcode.
+        picksMap.remove(barcode);
+        remoteStorageService.removeBarcodeFromMap(barcode, configId);
       }
       return null;
     }
