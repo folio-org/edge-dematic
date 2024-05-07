@@ -6,7 +6,7 @@ import org.springframework.integration.core.GenericHandler;
 import org.springframework.messaging.MessageHeaders;
 
 public class ServerMessageHandler implements GenericHandler<String> {
-  public static final String TRANSACTION_RESPONSE_MESSAGE = "TR0000920200101121212000";
+  public static final String TRANSACTION_RESPONSE_MESSAGE = "TR0002020200101121212000";
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ServerMessageHandler.class);
 
