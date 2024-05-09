@@ -39,7 +39,7 @@ public class PrimaryChannelHandler {
       var barcode = picksMap.get(extractTransactionNumber(payload));
       if (nonNull(barcode)) {
         var tenantId = configuration.getTenantId();
-        remoteStorageService.setRetrievedAsync(picksMap.get(barcode), tenantId,
+        remoteStorageService.setRetrievedAsync(barcode, tenantId,
           sms.getStagingDirectorConnectionParameters(tenantId)
           .getOkapiToken().accessToken());
         picksMap.remove(barcode);
