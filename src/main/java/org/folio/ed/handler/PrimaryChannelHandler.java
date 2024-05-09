@@ -32,8 +32,7 @@ public class PrimaryChannelHandler {
     LOGGER.info("Primary channel handler income: \"{}\"", payload);
     var configId = configuration.getId();
     if (resolveMessageType(payload) == PICK_REQUEST) {
-      var tranNu = extractTransactionNumber(payload);
-      picksMap.put(tranNu, extractBarcode(payload));
+      picksMap.put(extractTransactionNumber(payload), extractBarcode(payload));
     }
     if (resolveMessageType(payload) == TRANSACTION_RESPONSE) {
       remoteStorageService.updateLastMessageTime(configId);
@@ -42,7 +41,7 @@ public class PrimaryChannelHandler {
         var tenantId = configuration.getTenantId();
         remoteStorageService.setRetrievedAsync(picksMap.get(barcode), tenantId,
           sms.getStagingDirectorConnectionParameters(tenantId)
-          .getOkapiToken().accessToken()); // here map is sending incorrect barcode.
+          .getOkapiToken().accessToken());
         picksMap.remove(barcode);
         remoteStorageService.removeBarcodeFromMap(barcode, configId);
       }

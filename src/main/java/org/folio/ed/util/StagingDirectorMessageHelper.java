@@ -81,7 +81,7 @@ public final class StagingDirectorMessageHelper {
   }
 
   public static String extractTransactionNumber(String message) {
-    return message.substring(MSG_TYPE_SIZE, MSG_TYPE_SIZE + TRANS_NUM_SIZE); // TR406642024
+    return message.substring(MSG_TYPE_SIZE, MSG_TYPE_SIZE + TRANS_NUM_SIZE);
   }
 
   public static String extractBarcode(String statusMessage) {
