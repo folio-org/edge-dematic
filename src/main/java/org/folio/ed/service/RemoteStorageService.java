@@ -61,7 +61,7 @@ public class RemoteStorageService {
     synchronized (retrievalsMap) {
       List<RetrievalQueueRecord> retrievals = retrievalsMap.getOrDefault(configId, Collections.emptyList());
       List<RetrievalQueueRecord> updatedRetrievals = new ArrayList<>(retrievals);
-      updatedRetrievals.removeIf(record -> barcode.equals(record.getItemBarcode()));
+      updatedRetrievals.removeIf(retrievalQueueRecord -> barcode.equals(retrievalQueueRecord.getItemBarcode()));
       retrievalsMap.put(configId, updatedRetrievals);
     }
   }
