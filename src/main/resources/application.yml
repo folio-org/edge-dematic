@@ -1,4 +1,6 @@
+# Dokapi_url is deprecated. Please use folio.client.okapiUrl instead
 Dokapi_url: http://localhost:9130
+# okapi_url is deprecated. Please use folio.client.okapiUrl instead
 okapi_url: ${Dokapi_url}
 Dsecure_store_props: src/main/resources/ephemeral.properties
 secure_store_props: ${Dsecure_store_props}
@@ -37,6 +39,13 @@ folio:
     username: ${SYSTEM_USER_NAME:system-user}
     password: ${SYSTEM_USER_PASSWORD}
   environment: ${ENV:folio}
+  client:
+    okapiUrl: http://localhost:9130
+    tls:
+      enabled: false
+#      trustStorePath: ~/test/test.truststore.bcfks
+#      trustStorePassword: "SecretPassword"
+#      trustStoreType: BCFKS
 
 logging:
   level:
