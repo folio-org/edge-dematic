@@ -42,7 +42,7 @@
     <edge-dematic.yaml.file>src/main/resources/swagger.api/edge-dematic.yaml</edge-dematic.yaml.file>
 
     <!--Sonar properties-->
-    <sonar.exclusions>src/main/java/org/folio/ed/domain/**, src/main/java/org/folio/ed/client/AuthnClient.java, src/main/java/org/folio/ed/error/ErrorControllerImpl.java</sonar.exclusions>
+    <sonar.exclusions>src/main/java/org/folio/ed/domain/**, src/main/java/org/folio/ed/EdgeDematicApplication.java, src/main/java/org/folio/ed/error/ErrorControllerImpl.java</sonar.exclusions>
     <sonar.coverage.exclusions>src/main/java/org/folio/ed/util/MessageTypes.java</sonar.coverage.exclusions>
     <bc-fips.version>1.0.2.5</bc-fips.version>
     <bcpkix-fips.version>1.0.7</bcpkix-fips.version>
