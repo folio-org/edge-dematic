@@ -11,11 +11,11 @@ import static org.folio.ed.util.MessageTypes.STATUS_CHECK;
 import static org.folio.ed.util.MessageTypes.TRANSACTION_RESPONSE;
 import static org.folio.ed.util.StagingDirectorErrorCodes.SUCCESS;
 
-import org.folio.ed.domain.dto.AccessionQueueRecord;
-import org.folio.ed.domain.dto.RetrievalQueueRecord;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import org.folio.ed.domain.dto.AccessionQueueRecord;
+import org.folio.ed.domain.dto.RetrievalQueueRecord;
 
 public final class StagingDirectorMessageHelper {
   static final int MSG_TYPE_SIZE = 2;
@@ -78,6 +78,10 @@ public final class StagingDirectorMessageHelper {
 
   public static MessageTypes resolveMessageType(String message) {
     return MessageTypes.fromCode(message.substring(0, MSG_TYPE_SIZE));
+  }
+
+  public static String extractTransactionNumber(String message) {
+    return message.substring(MSG_TYPE_SIZE, MSG_TYPE_SIZE + TRANS_NUM_SIZE);
   }
 
   public static String extractBarcode(String statusMessage) {
