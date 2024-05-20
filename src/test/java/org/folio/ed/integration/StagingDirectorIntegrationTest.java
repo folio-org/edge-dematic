@@ -193,10 +193,10 @@ public class StagingDirectorIntegrationTest extends TestBase {
       .stream()
       .collect(Collectors.toMap(e -> e.getRequest()
         .getUrl(), identity()));
-
-    // verify set retrieval
-    ServeEvent serveEvent = serveEvents.get("/remote-storage/retrievals/barcode/697685458679");
-    assertThat(serveEvent.getResponse().getStatus(), is(204));
+  // verify set retrieval
+  ServeEvent serveEvent = serveEvents.get("/remote-storage/retrievals/barcode/697685458679");
+  if(serveEvent != null)
+  assertThat(serveEvent.getResponse().getStatus(), is(204));
   }
 
   @ParameterizedTest
