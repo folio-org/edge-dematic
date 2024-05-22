@@ -1,3 +1,4 @@
+# Dokapi_url is deprecated. Please use folio.client.okapiUrl instead
 okapi_url: http://localhost:3333
 spring:
   application:
@@ -23,6 +24,8 @@ logging:
 
 server.port: 8081
 folio.tenant.validation.enabled: false
+folio.client.okapiUrl: http://localhost:3333
+folio.client.tls.enabled: false
 
 # mock server settings
 mock.server.primary.port: 10001
