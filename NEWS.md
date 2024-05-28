@@ -1,3 +1,9 @@
+## 2.2.1 2024-05-28
+
+* [EDGDEMATIC-100](https://issues.folio.org/browse/EDGDEMATIC-100) - Enhance HTTP Endpoint Security with TLS and FIPS-140-2 Compliant Cryptography
+* [EDGDEMATIC-99](https://issues.folio.org/browse/EDGDEMATIC-99) - Enhance RemoteStorageClient TLS Configuration for Secure Connections to OKAPI
+
+
 ## 2.2.0 2024-03-20
 
 * [EDGDEMATIC-95](https://issues.folio.org/browse/EDGDEMATIC-95) - Spring Boot 3.1.6 fixing Denial of Service (DoS)
