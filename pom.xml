@@ -11,7 +11,7 @@
 
   <groupId>org.folio</groupId>
   <artifactId>edge-dematic</artifactId>
-  <version>2.2.2-SNAPSHOT</version>
+  <version>2.2.3-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <licenses>
@@ -44,26 +44,14 @@
     <!--Sonar properties-->
     <sonar.exclusions>src/main/java/org/folio/ed/domain/**, src/main/java/org/folio/ed/EdgeDematicApplication.java, src/main/java/org/folio/ed/error/ErrorControllerImpl.java</sonar.exclusions>
     <sonar.coverage.exclusions>src/main/java/org/folio/ed/util/MessageTypes.java</sonar.coverage.exclusions>
-    <bc-fips.version>1.0.2.5</bc-fips.version>
-    <bcpkix-fips.version>1.0.7</bcpkix-fips.version>
-    <bctls-fips.version>1.0.19</bctls-fips.version>
+    <folio-tls-utils.version>1.5.0</folio-tls-utils.version>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bc-fips</artifactId>
-      <version>${bc-fips.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bcpkix-fips</artifactId>
-      <version>${bcpkix-fips.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.bouncycastle</groupId>
-      <artifactId>bctls-fips</artifactId>
-      <version>${bctls-fips.version}</version>
+      <groupId>org.folio</groupId>
+      <artifactId>folio-tls-utils</artifactId>
+      <version>${folio-tls-utils.version}</version>
     </dependency>
     <dependency>
       <groupId>org.folio</groupId>
