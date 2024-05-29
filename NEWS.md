@@ -1,3 +1,7 @@
+## 2.2.2 2024-05-29
+
+* [EDGDEMATIC-99](https://issues.folio.org/browse/EDGDEMATIC-99) - Re release the fix.
+
 ## 2.2.1 2024-05-28
 
 * [EDGDEMATIC-100](https://issues.folio.org/browse/EDGDEMATIC-100) - Enhance HTTP Endpoint Security with TLS and FIPS-140-2 Compliant Cryptography
