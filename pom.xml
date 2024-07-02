@@ -30,7 +30,7 @@
     <openapi-generator.version>7.3.0</openapi-generator.version>
     <mapstruct.version>1.5.3.Final</mapstruct.version>
     <wiremock.version>3.4.2</wiremock.version>
-    <edge-common-spring.version>2.4.3</edge-common-spring.version>
+    <edge-common-spring.version>2.4.5</edge-common-spring.version>
 
     <!--Plugin properties-->
     <maven-clean-plugin.version>3.3.2</maven-clean-plugin.version>
@@ -44,15 +44,9 @@
     <!--Sonar properties-->
     <sonar.exclusions>src/main/java/org/folio/ed/domain/**, src/main/java/org/folio/ed/EdgeDematicApplication.java, src/main/java/org/folio/ed/error/ErrorControllerImpl.java</sonar.exclusions>
     <sonar.coverage.exclusions>src/main/java/org/folio/ed/util/MessageTypes.java</sonar.coverage.exclusions>
-    <folio-tls-utils.version>1.5.0</folio-tls-utils.version>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>org.folio</groupId>
-      <artifactId>folio-tls-utils</artifactId>
-      <version>${folio-tls-utils.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.folio</groupId>
       <artifactId>edge-common-spring</artifactId>
