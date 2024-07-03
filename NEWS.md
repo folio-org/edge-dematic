@@ -1,3 +1,9 @@
+## 2.2.3 2024-07-03
+
+* [EDGDEMATIC-104](https://issues.folio.org/browse/EDGDEMATIC-104) - folio-spring-base 8.1.2, Spring Boot 3.2.6, edge-common 4.7.0 fixing vulns
+* [EDGDEMATIC-105](https://issues.folio.org/browse/EDGDEMATIC-105) - edge-common-spring 2.4.5: AwsParamStore to support FIPS-approved crypto modules
+
+
 ## 2.2.2 2024-05-29
 
 * [EDGDEMATIC-99](https://issues.folio.org/browse/EDGDEMATIC-99) - Re release the fix.
