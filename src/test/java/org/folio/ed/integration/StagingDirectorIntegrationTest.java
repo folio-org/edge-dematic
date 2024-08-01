@@ -199,6 +199,31 @@ public class StagingDirectorIntegrationTest extends TestBase {
   assertThat(serveEvent.getResponse().getStatus(), is(204));
   }
 
+  @Test
+  void shouldSendTRMessageSuccessfulAndPrintInfoLog() {
+    log.info("===== Receive item missing Status Message (SM), send back Success Transaction Message (TR)," +
+      " Print info log that item missing SM message received : successful =====");
+    Configuration configuration = buildConfiguration();
+    remoteStorageService.getRetrievalQueueRecords(configuration.getId(), TEST_TENANT, OKAPI_TOKEN);
+    setMessage("SM0000120200101121212697685458679  004");
+
+    integrationService.registerFeedbackChannelListener(configuration);
+    integrationService.registerPrimaryChannelOutboundGateway(configuration);
+    integrationService.registerStatusChannelFlow(configuration);
+
+    await().atMost(1, SECONDS).untilAsserted(() -> {
+      verify(statusChannelHandler).handle(matches("SM\\d{19}697685458679\\s{2}004"), any());
+      verify(serverMessageHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any());
+    });
+
+    Map<String, ServeEvent> serveEvents = wireMockServer.getAllServeEvents()
+      .stream()
+      .collect(Collectors.toMap(e -> e.getRequest()
+        .getUrl(), identity()));
+    assertNotNull(serveEvents);
+  }
+
+
   @ParameterizedTest
   @EnumSource(value = StagingDirectorErrorCodes.class, names = { "INVENTORY_NOT_IN_DATABASE", "SKU_NOT_IN_DATABASE", "INVALID_SKU_FORMAT" })
   void shouldMarkItemAsMissingOnStatusMessageWithCodeForMissing(StagingDirectorErrorCodes errorCode) {
