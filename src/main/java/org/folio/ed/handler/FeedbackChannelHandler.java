@@ -39,7 +39,7 @@ public class FeedbackChannelHandler {
           remoteStorageService.setRetrievedAsync(extractBarcode(payload), tenantId, okapiToken);
           return null;
         case ITEM_MISSING:
-          LOGGER.info("Received SM with ITEM MISSING ERROR CODE 004 {}", payload);
+          LOGGER.error("Received SM with ITEM MISSING ERROR CODE 004 {}", payload);
           return null;
         default:
           return null;
