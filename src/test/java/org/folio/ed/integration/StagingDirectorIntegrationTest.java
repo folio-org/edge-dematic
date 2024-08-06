@@ -200,9 +200,9 @@ public class StagingDirectorIntegrationTest extends TestBase {
   }
 
   @Test
-  void shouldSendTRMessageSuccessfulAndPrintInfoLog() {
+  void shouldSendTRMessageSuccessfulAndPrintErrorLog() {
     log.info("===== Receive item missing Status Message (SM), send back Success Transaction Message (TR)," +
-      " Print info log that item missing SM message received : successful =====");
+      " Print error log that item missing SM message received : successful =====");
     Configuration configuration = buildConfiguration();
     remoteStorageService.getRetrievalQueueRecords(configuration.getId(), TEST_TENANT, OKAPI_TOKEN);
     setMessage("SM0000120200101121212697685458679  004");
