@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.matches;
@@ -153,9 +154,9 @@ public class StagingDirectorIntegrationTest extends TestBase {
       .stream()
       .collect(Collectors.toMap(e -> e.getRequest()
         .getUrl(), identity()));
-//
-//    ServeEvent setAccessionEvent = serveEvents.get("/remote-storage/accessions/barcode/697685458679");
-//    assertThat(setAccessionEvent.getResponse().getStatus(), is(204));
+    //No server event for accessions as the item's barcode is not present in the IC message.
+    assertNull(serveEvents.get("/remote-storage/accessions/barcode/697685458679"));
+
   }
 
 
