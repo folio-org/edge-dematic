@@ -26,7 +26,7 @@ public class StatusChannelHandler {
   public Object handle(String payload, Configuration configuration) {
     LOGGER.info("Status channel handler income: \"{}\"", payload);
     var tenantId = configuration.getTenantId();
-    if (resolveMessageType(payload) == INVENTORY_CONFIRM) {
+    if (resolveMessageType(payload) == INVENTORY_CONFIRM && !extractBarcode(payload).isEmpty()) {
       remoteStorageService.setAccessionedAsync(extractBarcode(payload), tenantId,
         sms.getStagingDirectorConnectionParameters(tenantId)
           .getOkapiToken().accessToken());
