@@ -138,6 +138,28 @@ public class StagingDirectorIntegrationTest extends TestBase {
     assertThat(setAccessionEvent.getResponse().getStatus(), is(204));
   }
 
+  @Test
+  void shouldRetunSuccessTrWhenInventoryConfirmHasNoBarcode() {
+    log.info("===== Receive successful Inventory Confirm (IC) and set accessioned by barcode : successful =====");
+    setMessage("IC0001520240802081209              000");
+    Configuration configuration = buildConfiguration();
+
+    integrationService.registerFeedbackChannelListener(configuration);
+    integrationService.registerStatusChannelFlow(configuration);
+
+    await().atMost(1, SECONDS).untilAsserted(() ->
+      verify(serverMessageHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any()));
+
+    Map<String, ServeEvent> serveEvents = wireMockServer.getAllServeEvents()
+      .stream()
+      .collect(Collectors.toMap(e -> e.getRequest()
+        .getUrl(), identity()));
+    //No server event for accessions as the item's barcode is not present in the IC message.
+    assertNull(serveEvents.get("/remote-storage/accessions/barcode/697685458679"));
+
+  }
+
+
   @ParameterizedTest
   @EnumSource(value = StagingDirectorErrorCodes.class, names = { "SUCCESS", "INVALID_SKU_FORMAT", "SKU_ALREADY_IN_DATABASE" })
   void shouldSetAccessionedByBarcodeOnInventoryConfirmWithAnyCode(StagingDirectorErrorCodes errorCode) {
