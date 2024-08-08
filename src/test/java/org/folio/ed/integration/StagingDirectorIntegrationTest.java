@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.matches;
@@ -198,6 +199,32 @@ public class StagingDirectorIntegrationTest extends TestBase {
   if(serveEvent != null)
   assertThat(serveEvent.getResponse().getStatus(), is(204));
   }
+
+  @Test
+  void shouldSendTRMessageSuccessfulAndPrintErrorLog() {
+    log.info("===== Receive item missing Status Message (SM), send back Success Transaction Message (TR)," +
+      " Print error log that item missing SM message received : successful =====");
+    Configuration configuration = buildConfiguration();
+    remoteStorageService.getRetrievalQueueRecords(configuration.getId(), TEST_TENANT, OKAPI_TOKEN);
+    setMessage("SM0000120200101121212697685458679  004");
+
+    integrationService.registerFeedbackChannelListener(configuration);
+    integrationService.registerPrimaryChannelOutboundGateway(configuration);
+    integrationService.registerStatusChannelFlow(configuration);
+
+    await().atMost(1, SECONDS).untilAsserted(() -> {
+      verify(statusChannelHandler).handle(matches("SM\\d{19}697685458679\\s{2}004"), any());
+      verify(serverMessageHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any());
+    });
+
+    Map<String, ServeEvent> serveEvents = wireMockServer.getAllServeEvents()
+      .stream()
+      .collect(Collectors.toMap(e -> e.getRequest()
+        .getUrl(), identity()));
+    // No retrievals calls should happen in case the item is missing.
+    assertNull(serveEvents.get("/remote-storage/retrievals/barcode/697685458679"));
+  }
+
 
   @ParameterizedTest
   @EnumSource(value = StagingDirectorErrorCodes.class, names = { "INVENTORY_NOT_IN_DATABASE", "SKU_NOT_IN_DATABASE", "INVALID_SKU_FORMAT" })
