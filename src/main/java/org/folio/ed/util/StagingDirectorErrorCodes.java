@@ -11,7 +11,8 @@ public enum StagingDirectorErrorCodes {
   SKU_HAS_INVENTORY("009"),
   INVENTORY_IS_NOT_AVAILABLE("010"),
   SKU_HAS_WORK("011"),
-  DUPLICATE_MESSAGE("014");
+  DUPLICATE_MESSAGE("014"),
+  ITEM_MISSING("004");
 
   private String value;
 

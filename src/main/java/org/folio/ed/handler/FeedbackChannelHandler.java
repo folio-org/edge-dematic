@@ -38,6 +38,9 @@ public class FeedbackChannelHandler {
         case INVENTORY_ALREADY_COMMITTED, INVENTORY_IS_NOT_AVAILABLE, DUPLICATE_MESSAGE:
           remoteStorageService.setRetrievedAsync(extractBarcode(payload), tenantId, okapiToken);
           return null;
+        case ITEM_MISSING:
+          LOGGER.error("Received SM with ITEM MISSING ERROR CODE 004 {}", payload);
+          return null;
         default:
           return null;
       }
