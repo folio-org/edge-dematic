@@ -29,6 +29,20 @@
   ],
   "provides": [],
   "permissionSets": [],
+  "metadata": {
+    "user": {
+      "type": "system",
+      "permissions": [
+        "remote-storage.configurations.collection.get",
+        "remote-storage.accessions.collection.get",
+        "remote-storage.accessions.item.put",
+        "remote-storage.check-in.item.post",
+        "remote-storage.return.item.post",
+        "remote-storage.retrievals.collection.get",
+        "remote-storage.retrievals.item.put"
+      ]
+    }
+  },
   "launchDescriptor": {
     "dockerImage": "${artifactId}:${version}",
     "dockerPull": false,

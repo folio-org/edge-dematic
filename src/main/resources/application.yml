@@ -36,6 +36,7 @@ feign:
         loggerLevel: full
 folio:
   system-user:
+    enabled: ${SYSTEM_USER_ENABLED:true}
     username: ${SYSTEM_USER_NAME:system-user}
     password: ${SYSTEM_USER_PASSWORD}
   environment: ${ENV:folio}

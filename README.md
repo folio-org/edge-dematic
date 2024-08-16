@@ -201,6 +201,14 @@ FOLIO_CLIENT_TLS_TRUSTSTOREPASSWORD=SecretPassword
 FOLIO_CLIENT_TLS_TRUSTSTORETYPE=bcfks
 ```
 
+### System user
+
+| Name                          | Default value | Description                                                                 |
+|:------------------------------|:-------------:|:----------------------------------------------------------------------------|
+| SYSTEM_USER_ENABLED           |     true      | Defines if system user must be created during service tenant initialization |
+| SYSTEM_USER_NAME              |  system-user  | Username of system user                                                     |
+| SYSTEM_USER_PASSWORD          |       -       | Internal user password                                                      |
+
 ### Issue tracker
 See project [EDGDEMATIC](https://issues.folio.org/browse/EDGDEMATIC)
 at the [FOLIO issue tracker](https://dev.folio.org/guidelines/issue-tracker).
