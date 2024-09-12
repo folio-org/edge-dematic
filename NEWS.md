@@ -1,3 +1,9 @@
+## 2.2.4 2024-09-12
+
+* [EDGDEMATIC-108](https://issues.folio.org/browse/EDGDEMATIC-108) - FOLIO not sending ACK to remote storage (dematic) for 004 code
+* [EDGDEMATIC-109](https://issues.folio.org/browse/EDGDEMATIC-109) - FOLIO needs to ignore messages with a null barcode and a status code of 000
+
+
 ## 2.2.3 2024-07-03
 
 * [EDGDEMATIC-104](https://issues.folio.org/browse/EDGDEMATIC-104) - folio-spring-base 8.1.2, Spring Boot 3.2.6, edge-common 4.7.0 fixing vulns
