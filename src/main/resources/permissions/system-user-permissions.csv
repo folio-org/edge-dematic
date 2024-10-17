@@ -5,3 +5,6 @@ remote-storage.check-in.item.post
 remote-storage.return.item.post
 remote-storage.retrievals.collection.get
 remote-storage.retrievals.item.put
+remote-storage.retrievals.item-barcode.put
+remote-storage.check-in.item-hold.post
+remote-storage.accessions.item-barcode.put
