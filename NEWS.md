@@ -1,3 +1,17 @@
+## 2.3.0 2024-10-31
+
+* [EDGDEMATIC-99](https://folio-org.atlassian.net/browse/EDGDEMATIC-99)  - Enhance RemoteStorageClient TLS Configuration for Secure Connections to OKAPI
+* [EDGDEMATIC-100](https://folio-org.atlassian.net/browse/EDGDEMATIC-100) - Enhance HTTP Endpoint Security with TLS and FIPS-140-2 Compliant Cryptography
+* [EDGDEMATIC-101](https://folio-org.atlassian.net/browse/EDGDEMATIC-101) - Remote storage queues issue
+* [EDGDEMATIC-102](https://folio-org.atlassian.net/browse/EDGDEMATIC-102) - Release EDGDEMATIC-99, 100
+* [EDGDEMATIC-104](https://folio-org.atlassian.net/browse/EDGDEMATIC-104) - folio-spring-base 8.1.2, Spring Boot 3.2.6, edge-common 4.7.0 fixing vulns
+* [EDGDEMATIC-105](https://folio-org.atlassian.net/browse/EDGDEMATIC-105) - edge-common-spring 2.4.5: AwsParamStore to support FIPS-approved crypto modules
+* [EDGDEMATIC-107](https://folio-org.atlassian.net/browse/EDGDEMATIC-107) - Spike: [MODRS-197] FOLIO not sending ACK to remote storage (dematic)
+* [EDGDEMATIC-108](https://folio-org.atlassian.net/browse/EDGDEMATIC-108) - FOLIO not sending ACK to remote storage (dematic) for 004 code
+* [EDGDEMATIC-109](https://folio-org.atlassian.net/browse/EDGDEMATIC-109) - FOLIO needs to ignore messages with a null barcode and a status code of 000
+* [EDGDEMATIC-113](https://folio-org.atlassian.net/browse/EDGDEMATIC-113) - Add permission changes
+* [EDGDEMATIC-114](https://folio-org.atlassian.net/browse/EDGDEMATIC-114) - Update Spring support version for Ramsons
+
 ## 2.2.0 2024-03-20
 
 * [EDGDEMATIC-95](https://issues.folio.org/browse/EDGDEMATIC-95) - Spring Boot 3.1.6 fixing Denial of Service (DoS)
