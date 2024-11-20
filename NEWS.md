@@ -1,3 +1,7 @@
+## 2.3.1 2024-11-20
+
+* Changes relate to TLS support
+
 ## 2.3.0 2024-10-31
 
 * [EDGDEMATIC-99](https://folio-org.atlassian.net/browse/EDGDEMATIC-99)  - Enhance RemoteStorageClient TLS Configuration for Secure Connections to OKAPI
