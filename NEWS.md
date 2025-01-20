@@ -1,3 +1,7 @@
+## 2.2.5 2025-01-20
+
+* [EDGDEMATIC-120](https://folio-org.atlassian.net/browse/EDGDEMATIC-120) - Spring Boot 3.2.12 fixing tomcat-embed-core vulns
+
 ## 2.2.4 2024-09-12
 
 * [EDGDEMATIC-108](https://issues.folio.org/browse/EDGDEMATIC-108) - FOLIO not sending ACK to remote storage (dematic) for 004 code
