@@ -19,10 +19,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
-import com.amazonaws.services.simplesystemsmanagement.model.GetParameterRequest;
-import com.amazonaws.services.simplesystemsmanagement.model.GetParameterResult;
-import com.amazonaws.services.simplesystemsmanagement.model.Parameter;
+import software.amazon.awssdk.services.ssm.SsmClient;
+import software.amazon.awssdk.services.ssm.model.GetParameterRequest;
+import software.amazon.awssdk.services.ssm.model.GetParameterResponse;
+import software.amazon.awssdk.services.ssm.model.Parameter;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -30,7 +30,7 @@ import lombok.extern.log4j.Log4j2;
 public class TenantAwareAWSParamStoreTest {
 
   @Mock
-  AWSSimpleSystemsManagement ssm;
+  SsmClient ssm;
 
   @InjectMocks
   TenantAwareAWSParamStore secureStore;
@@ -48,15 +48,17 @@ public class TenantAwareAWSParamStoreTest {
     log.info("=== Test: Get tenants if staging director tenants value is empty ===");
 
     var value = "test_tenant_1, test_user";
-    var resp = new GetParameterResult().withParameter(new Parameter().withName("parameterName")
-      .withValue(value));
+    var resp = GetParameterResponse.builder().parameter(Parameter.builder()
+                            .name("parameterName")
+                            .value(value)
+                            .build()).build();
     when(ssm.getParameter(isA(GetParameterRequest.class))).thenReturn(resp);
 
     var argumentRequest = ArgumentCaptor.forClass(GetParameterRequest.class);
     var tenants = secureStore.getTenants(null);
     verify(ssm).getParameter(argumentRequest.capture());
 
-    assertEquals(DEFAULT_AWS_KEY_PARAMETER, argumentRequest.getValue().getName());
+    assertEquals(DEFAULT_AWS_KEY_PARAMETER, argumentRequest.getValue().name());
     assertTrue(tenants.isPresent());
     assertThat(tenants.get(), Matchers.equalTo(value));
   }
@@ -66,15 +68,17 @@ public class TenantAwareAWSParamStoreTest {
     log.info("=== Test: Get tenants if staging director tenants value is not empty ===");
 
     var value = "test_tenant_1, test_user";
-    var resp = new GetParameterResult().withParameter(new Parameter().withName("parameterName")
-      .withValue(value));
+    var resp = GetParameterResponse.builder().parameter(Parameter.builder()
+            .name("parameterName")
+            .value(value)
+            .build()).build();
     when(ssm.getParameter(isA(GetParameterRequest.class))).thenReturn(resp);
 
     var argumentRequest = ArgumentCaptor.forClass(GetParameterRequest.class);
     var tenants = secureStore.getTenants("stagingDirectorTenants");
     verify(ssm).getParameter(argumentRequest.capture());
 
-    assertEquals("stagingDirectorTenants", argumentRequest.getValue().getName());
+    assertEquals("stagingDirectorTenants", argumentRequest.getValue().name());
     assertTrue(tenants.isPresent());
     assertThat(tenants.get(), Matchers.equalTo(value));
   }
