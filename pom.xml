@@ -25,7 +25,7 @@
     <!--Dependencies properties-->
     <java.version>21</java.version>
     <folio-spring-base.version>8.2.1</folio-spring-base.version>
-    <edge-common.version>4.7.0</edge-common.version>
+    <edge-common.version>4.9.0-SNAPSHOT</edge-common.version>
     <spring-cloud-starter-bootstrap.version>4.1.1</spring-cloud-starter-bootstrap.version>
     <openapi-generator.version>7.3.0</openapi-generator.version>
     <mapstruct.version>1.5.3.Final</mapstruct.version>
