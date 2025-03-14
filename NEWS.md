@@ -1,3 +1,8 @@
+## 2.4.0 2025-03-13
+
+* [FOLIO-4229](https://folio-org.atlassian.net/browse/FOLIO-4229) - Update to edge-dematic Java 21 and Spring Boot 3.4
+* [EDGDEMATIC-118](https://folio-org.atlassian.net/browse/EDGDEMATIC-118) - Sunflower 2025 R1 - Migrate AWS SDK for Java from 1.x to 2.x + Edge common upgrade
+
 ## 2.3.1 2024-11-20
 
 * Changes relate to TLS support
