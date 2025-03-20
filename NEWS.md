@@ -1,3 +1,7 @@
+## 2.4.1 2025-03-20
+
+* [EDGDEMATIC-124](https://folio-org.atlassian.net/browse/EDGDEMATIC-124) - Fix POM libs version upgrades after Sunflower Releases
+
 ## 2.4.0 2025-03-13
 
 * [FOLIO-4229](https://folio-org.atlassian.net/browse/FOLIO-4229) - Update to edge-dematic Java 21 and Spring Boot 3.4
