@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.4.2</version>
+    <version>3.4.3</version>
     <relativePath />
   </parent>
 
   <groupId>org.folio</groupId>
   <artifactId>edge-dematic</artifactId>
-  <version>2.4.1-SNAPSHOT</version>
+  <version>2.4.2-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <licenses>
@@ -26,12 +26,11 @@
     <java.version>21</java.version>
     <folio-spring-base.version>9.0.0</folio-spring-base.version>
     <edge-common.version>4.9.0</edge-common.version>
-    <spring-cloud-starter-bootstrap.version>4.1.1</spring-cloud-starter-bootstrap.version>
+    <spring-cloud-starter-bootstrap.version>4.2.0</spring-cloud-starter-bootstrap.version>
     <openapi-generator.version>7.11.0</openapi-generator.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <wiremock.version>3.12.1</wiremock.version>
     <edge-common-spring.version>3.0.0</edge-common-spring.version>
-    <commons-lang3.version>3.17.0</commons-lang3.version>
 
     <!--Plugin properties-->
     <maven-clean-plugin.version>3.4.1</maven-clean-plugin.version>
