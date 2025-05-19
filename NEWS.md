@@ -1,3 +1,7 @@
+## 2.4.2 2025-05-19
+
+* [EDGDEMATIC-130](https://folio-org.atlassian.net/browse/EDGDEMATIC-130) - Fix Spring Bootstrap issue 'management.endpoint.loggers.access' uses an incompatible target type
+
 ## 2.4.1 2025-03-20
 
 * [EDGDEMATIC-124](https://folio-org.atlassian.net/browse/EDGDEMATIC-124) - Fix POM libs version upgrades after Sunflower Releases
