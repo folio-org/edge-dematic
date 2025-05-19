@@ -28,7 +28,7 @@ management:
         include: health,info,loggers
   endpoint:
     loggers:
-      enabled: true
+      access: unrestricted
 feign:
   client:
     config:
