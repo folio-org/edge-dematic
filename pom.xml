@@ -29,7 +29,7 @@
     <spring-cloud-starter-bootstrap.version>4.2.0</spring-cloud-starter-bootstrap.version>
     <openapi-generator.version>7.14.0</openapi-generator.version>
     <mapstruct.version>1.6.3</mapstruct.version>
-    <wiremock.version>3.12.1</wiremock.version>
+    <wiremock.version>3.13.1</wiremock.version>
     <edge-common-spring.version>3.0.0</edge-common-spring.version>
 
     <!--Plugin properties-->
