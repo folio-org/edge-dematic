@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.5.5</version>
+    <version>4.0.1</version>
     <relativePath />
   </parent>
 
@@ -30,7 +30,7 @@
     <openapi-generator.version>7.15.0</openapi-generator.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <wiremock.version>3.13.1</wiremock.version>
-    <edge-common-spring.version>3.0.0</edge-common-spring.version>
+    <edge-common-spring.version>3.0.1</edge-common-spring.version>
 
     <!--Plugin properties-->
     <maven-clean-plugin.version>3.5.0</maven-clean-plugin.version>
