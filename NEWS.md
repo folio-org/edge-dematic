@@ -1,3 +1,7 @@
+## 2.4.3 2026-01-21
+
+* Upgrade Spring Boot from 3.4.3 to 3.4.13 to fix security vulnerabilities.
+
 ## 2.4.2 2025-05-19
 
 * [EDGDEMATIC-130](https://folio-org.atlassian.net/browse/EDGDEMATIC-130) - Fix Spring Bootstrap issue 'management.endpoint.loggers.access' uses an incompatible target type
