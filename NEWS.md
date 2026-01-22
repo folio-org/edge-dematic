@@ -1,3 +1,7 @@
+## 2.3.2 2026-01-22
+
+* Netty 4.1.130, Tomcat 10.1.50 fixing vulnerabilities
+
 ## 2.3.1 2024-11-20
 
 * Changes relate to TLS support
