@@ -1,8 +1,5 @@
 package org.folio.ed.integration;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.function.Function.identity;
 import static org.awaitility.Awaitility.await;
@@ -38,9 +35,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.integration.dsl.context.IntegrationFlowContext;
 
 import com.github.tomakehurst.wiremock.http.RequestMethod;
@@ -60,16 +56,16 @@ public class StagingDirectorIntegrationTest extends TestBase {
   @Autowired
   private IntegrationFlowContext integrationFlowContext;
 
-  @SpyBean
+  @MockitoSpyBean
   private RemoteStorageService remoteStorageService;
 
-  @SpyBean
+  @MockitoSpyBean
   private StatusChannelHandler statusChannelHandler;
 
-  @SpyBean
+  @MockitoSpyBean
   private PrimaryChannelHandler primaryChannelHandler;
 
-  @SpyBean
+  @MockitoSpyBean
   private ServerMessageHandler serverMessageHandler;
 
   @BeforeEach

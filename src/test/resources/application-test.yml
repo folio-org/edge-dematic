@@ -10,12 +10,6 @@ spring:
   flyway:
     enabled: false
 
-feign:
-  client:
-    config:
-      default:
-        loggerLevel: BASIC
-
 logging:
   level:
     org:

@@ -1,6 +1,5 @@
 package org.folio.ed.security;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -8,7 +7,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import org.folio.ed.TestBase;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -24,8 +23,7 @@ public class EdgeSecurityFilterTest extends TestBase {
     var response = get(String.format(HEALTH_CHECK_ENDPOINT, edgeDematicPort), getEmptyHeaders(), JsonNode.class);
     assertThat(response.getBody(), notNullValue());
     assertThat(response.getBody()
-      .get("status")
-      .asText(), equalTo("UP"));
+      .get("status").asString(), equalTo("UP"));
   }
 
   @Test
@@ -33,7 +31,6 @@ public class EdgeSecurityFilterTest extends TestBase {
     log.info("===== Verify info endpoint =====");
     var response = get(String.format(INFO_ENDPOINT, edgeDematicPort), getEmptyHeaders(), JsonNode.class);
     assertThat(response.getBody(), notNullValue());
-    assertThat(response.getBody()
-      .asText(), equalTo(EMPTY));
+    assertThat(response.getBody().isObject(), equalTo(true));
   }
 }
