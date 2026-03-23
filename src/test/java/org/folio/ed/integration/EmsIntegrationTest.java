@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.http.converter.xml.JacksonXmlHttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -45,7 +45,7 @@ public class EmsIntegrationTest extends TestBase {
   private String lookupNewAsrItem, lookupAsrRequests, updateAsrStatusBeingRetrieved, updateAsrStatusAvailable;
 
   @Autowired
-  private MappingJackson2XmlHttpMessageConverter converter;
+  private JacksonXmlHttpMessageConverter converter;
 
   @BeforeEach
   void prepareUrl() {
@@ -70,7 +70,7 @@ public class EmsIntegrationTest extends TestBase {
 
     log.info("Response: " + response.getBody());
 
-    var asrItems = converter.getObjectMapper()
+    var asrItems = converter.getMapper()
       .readValue(response.getBody(), AsrItems.class)
       .getAsrItems();
     assertThat(asrItems, hasSize(1));
@@ -122,7 +122,7 @@ public class EmsIntegrationTest extends TestBase {
 
     log.info("Response: " + response.getBody());
 
-    var asrRequests = converter.getObjectMapper()
+    var asrRequests = converter.getMapper()
       .readValue(response.getBody(), AsrRequests.class)
       .getAsrRequests();
     assertThat(asrRequests, hasSize(1));
