@@ -8,8 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.RequiredArgsConstructor;
@@ -24,10 +22,8 @@ public class LookupAsrRequestsController implements LookupAsrRequestsApi {
   private final RemoteStorageService remoteStorageService;
 
   @Override
-  public ResponseEntity<AsrRequests> getAsrRequests(
-      @PathVariable("remoteStorageConfigurationId") String remoteStorageConfigurationId,
-      @RequestHeader(value = "x-okapi-token") String xOkapiToken,
-      @RequestHeader(value = "x-okapi-tenant") String xOkapiTenant) {
+  public ResponseEntity<AsrRequests> getAsrRequests(String remoteStorageConfigurationId,
+      String xOkapiToken, String xOkapiTenant) {
 
     var headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_XML);
