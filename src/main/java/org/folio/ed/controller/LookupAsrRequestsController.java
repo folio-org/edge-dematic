@@ -25,7 +25,7 @@ public class LookupAsrRequestsController implements LookupAsrRequestsApi {
 
   @Override
   public ResponseEntity<AsrRequests> getAsrRequests(
-      @PathVariable String remoteStorageConfigurationId,
+      @PathVariable("remoteStorageConfigurationId") String remoteStorageConfigurationId,
       @RequestHeader(value = "x-okapi-token") String xOkapiToken,
       @RequestHeader(value = "x-okapi-tenant") String xOkapiTenant) {
 

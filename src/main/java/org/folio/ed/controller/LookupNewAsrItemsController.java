@@ -25,7 +25,7 @@ public class LookupNewAsrItemsController implements LookupNewAsrItemsApi {
 
   @Override
   public ResponseEntity<AsrItems> getAsrItems(
-      @PathVariable String remoteStorageConfigurationId,
+      @PathVariable("remoteStorageConfigurationId") String remoteStorageConfigurationId,
       @RequestHeader(value = "x-okapi-token") String xOkapiToken,
       @RequestHeader(value = "x-okapi-tenant") String xOkapiTenant) {
 

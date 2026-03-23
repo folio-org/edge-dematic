@@ -23,7 +23,7 @@ public class UpdateASRItemStatusBeingRetrievedController implements UpdateASRIte
 
   @Override
   public ResponseEntity<Void> updateAsrItemCheckIn(
-    @PathVariable String remoteStorageConfigurationId,
+    @PathVariable("remoteStorageConfigurationId") String remoteStorageConfigurationId,
     @RequestHeader(value = "x-okapi-token") String xOkapiToken,
     @RequestHeader(value = "x-okapi-tenant") String xOkapiTenant,
     @RequestBody UpdateAsrItem updateAsrItem) {
