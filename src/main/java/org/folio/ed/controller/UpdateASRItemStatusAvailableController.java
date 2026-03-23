@@ -24,7 +24,7 @@ public class UpdateASRItemStatusAvailableController implements UpdateASRItemStat
 
   @Override
   public ResponseEntity<Void> updateAsrItemReturn(
-      @PathVariable("remoteStorageConfigurationId") String remoteStorageConfigurationId,
+      @PathVariable String remoteStorageConfigurationId,
       @RequestHeader(value = "x-okapi-token") String xOkapiToken,
       @RequestHeader(value = "x-okapi-tenant") String xOkapiTenant,
       @RequestBody UpdateAsrItem updateAsrItem) {
