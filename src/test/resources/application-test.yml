@@ -10,6 +10,15 @@ spring:
   flyway:
     enabled: false
 
+folio:
+  logging:
+    request:
+      enabled: true
+      level: BASIC
+    exchange:
+      enabled: true
+      level: BASIC
+
 logging:
   level:
     org:

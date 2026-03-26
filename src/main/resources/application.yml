@@ -30,6 +30,10 @@ management:
     loggers:
       access: unrestricted
 folio:
+  logging:
+    exchange:
+      enabled: true
+      level: BASIC
   system-user:
     username: ${SYSTEM_USER_NAME:system-user}
     password: ${SYSTEM_USER_PASSWORD}
