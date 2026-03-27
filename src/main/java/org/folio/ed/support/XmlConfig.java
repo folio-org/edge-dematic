@@ -13,6 +13,7 @@ public class XmlConfig {
   @Bean
   public JacksonXmlHttpMessageConverter jacksonXmlHttpMessageConverter() {
     XmlMapper xmlMapper = XmlMapper.builder()
+      .defaultUseWrapper(false)
       .configure(SerializationFeature.INDENT_OUTPUT, true)
       .build();
 
