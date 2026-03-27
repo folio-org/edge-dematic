@@ -29,12 +29,11 @@ management:
   endpoint:
     loggers:
       access: unrestricted
-feign:
-  client:
-    config:
-      default:
-        loggerLevel: BASIC
 folio:
+  logging:
+    exchange:
+      enabled: true
+      level: BASIC
   system-user:
     username: ${SYSTEM_USER_NAME:system-user}
     password: ${SYSTEM_USER_PASSWORD}

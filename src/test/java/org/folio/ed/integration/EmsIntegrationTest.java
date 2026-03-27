@@ -1,8 +1,5 @@
 package org.folio.ed.integration;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.function.Function.identity;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -27,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.http.converter.xml.JacksonXmlHttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -48,7 +45,7 @@ public class EmsIntegrationTest extends TestBase {
   private String lookupNewAsrItem, lookupAsrRequests, updateAsrStatusBeingRetrieved, updateAsrStatusAvailable;
 
   @Autowired
-  private MappingJackson2XmlHttpMessageConverter converter;
+  private JacksonXmlHttpMessageConverter converter;
 
   @BeforeEach
   void prepareUrl() {
@@ -73,7 +70,7 @@ public class EmsIntegrationTest extends TestBase {
 
     log.info("Response: " + response.getBody());
 
-    var asrItems = converter.getObjectMapper()
+    var asrItems = converter.getMapper()
       .readValue(response.getBody(), AsrItems.class)
       .getAsrItems();
     assertThat(asrItems, hasSize(1));
@@ -125,7 +122,7 @@ public class EmsIntegrationTest extends TestBase {
 
     log.info("Response: " + response.getBody());
 
-    var asrRequests = converter.getObjectMapper()
+    var asrRequests = converter.getMapper()
       .readValue(response.getBody(), AsrRequests.class)
       .getAsrRequests();
     assertThat(asrRequests, hasSize(1));
@@ -179,6 +176,7 @@ public class EmsIntegrationTest extends TestBase {
     updateAsrItem.setItemBarcode("697685458679");
     var headers = getEmptyHeaders();
     headers.put(HttpHeaders.AUTHORIZATION, Collections.singletonList(APIKEY));
+    headers.setContentType(APPLICATION_XML);
     var responseEntity = postCalls(updateAsrStatusBeingRetrieved + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers,
       updateAsrItem, String.class);
     assertThat(responseEntity.getStatusCode(), is(HttpStatus.CREATED));
@@ -204,6 +202,7 @@ public class EmsIntegrationTest extends TestBase {
     updateAsrItem.setItemBarcode("697685458679");
     var headers = getEmptyHeaders();
     headers.put(HttpHeaders.AUTHORIZATION, Collections.singletonList(APIKEY));
+    headers.setContentType(APPLICATION_XML);
     var responseEntity = postCalls(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629", headers,
       updateAsrItem, String.class);
     assertThat(responseEntity.getStatusCode(), is(HttpStatus.CREATED));
@@ -228,6 +227,7 @@ public class EmsIntegrationTest extends TestBase {
     var updateAsrItem = new UpdateAsrItem();
     updateAsrItem.setItemBarcode("error-barcode");
     var headers = getEmptyHeaders();
+    headers.setContentType(APPLICATION_XML);
 
     HttpServerErrorException exception = assertThrows(HttpServerErrorException.class,
       () -> postCalls(updateAsrStatusAvailable + "/de17bad7-2a30-4f1c-bee5-f653ded15629?apikey=" + APIKEY, headers, updateAsrItem,

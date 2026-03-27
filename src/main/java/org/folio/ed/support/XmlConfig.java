@@ -1,26 +1,22 @@
 package org.folio.ed.support;
 
-import static com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.http.converter.xml.JacksonXmlHttpMessageConverter;
 
-import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.dataformat.xml.XmlMapper;
 
 @Configuration
 public class XmlConfig {
 
   @Bean
-  public MappingJackson2XmlHttpMessageConverter mappingJackson2XmlHttpMessageConverter(Jackson2ObjectMapperBuilder builder) {
-    JacksonXmlModule module = new JacksonXmlModule();
-    module.setDefaultUseWrapper(false);
-    XmlMapper xmlMapper = builder.createXmlMapper(true)
+  public JacksonXmlHttpMessageConverter jacksonXmlHttpMessageConverter() {
+    XmlMapper xmlMapper = XmlMapper.builder()
       .defaultUseWrapper(false)
+      .configure(SerializationFeature.INDENT_OUTPUT, true)
       .build();
-    xmlMapper.enable(INDENT_OUTPUT);
-    return new MappingJackson2XmlHttpMessageConverter(xmlMapper);
+
+    return new JacksonXmlHttpMessageConverter(xmlMapper);
   }
 }

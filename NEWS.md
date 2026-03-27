@@ -1,5 +1,6 @@
 ## 2.4.0 In Progress
 * [EDGDEMATIC-139](https://folio-org.atlassian.net/browse/EDGDEMATIC-139) - Use GitHub Workflows for Maven
+* [EDGDEMATIC-135](https://folio-org.atlassian.net/browse/EDGDEMATIC-135) - Upgrade module to Spring Boot v4.0.3
 
 ## 2.4.0 2025-03-13
 

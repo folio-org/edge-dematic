@@ -10,11 +10,14 @@ spring:
   flyway:
     enabled: false
 
-feign:
-  client:
-    config:
-      default:
-        loggerLevel: BASIC
+folio:
+  logging:
+    request:
+      enabled: true
+      level: BASIC
+    exchange:
+      enabled: true
+      level: BASIC
 
 logging:
   level:
