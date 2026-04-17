@@ -1,6 +1,24 @@
-## 2.4.0 In Progress
-* [EDGDEMATIC-139](https://folio-org.atlassian.net/browse/EDGDEMATIC-139) - Use GitHub Workflows for Maven
-* [EDGDEMATIC-135](https://folio-org.atlassian.net/browse/EDGDEMATIC-135) - Upgrade module to Spring Boot v4.0.3
+## 3.0.0 2026-04-17
+
+### Breaking changes
+* Upgrade module to Spring Boot v4.0.3 ([EDGDEMATIC-135](https://folio-org.atlassian.net/browse/EDGDEMATIC-135))
+
+### Bug fixes
+* Fixed `management.endpoint.loggers.access` uses an incompatible target type ([EDGDEMATIC-130](https://folio-org.atlassian.net/browse/EDGDEMATIC-130))
+
+### Tech Debt
+* Use GitHub Workflows for Maven ([EDGDEMATIC-139](https://folio-org.atlassian.net/browse/EDGDEMATIC-139))
+* Add Dependabot config, CODEOWNERS, and pull request template ([EDGDEMATIC-132](https://folio-org.atlassian.net/browse/EDGDEMATIC-132))
+* Set HTTP client logger to BASIC ([EDGDEMATIC-121](https://folio-org.atlassian.net/browse/EDGDEMATIC-121))
+
+### Dependencies
+* Bump `spring-boot` from `3.4.2` to `4.0.5`
+* Bump `folio-spring-base` from `9.0.0` to `10.0.0`
+* Bump `edge-common` from `4.9.0` to `5.1.0`
+* Bump `edge-common-spring` from `3.0.0` to `4.0.0`
+* Bump `spring-cloud-starter-bootstrap` from `4.1.1` to `4.2.0`
+* Bump `openapi-generator` from `7.11.0` to `7.21.0`
+* Bump `wiremock` from `3.12.1` to `3.13.2`
 
 ## 2.4.0 2025-03-13
 
