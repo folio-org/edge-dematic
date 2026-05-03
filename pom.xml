@@ -27,7 +27,7 @@
     <edge-common.version>5.1.0</edge-common.version>
     <edge-common-spring.version>4.0.0</edge-common-spring.version>
     <spring-cloud-starter-bootstrap.version>4.2.0</spring-cloud-starter-bootstrap.version>
-    <openapi-generator.version>7.21.0</openapi-generator.version>
+    <openapi-generator.version>7.22.0</openapi-generator.version>
     <mapstruct.version>1.6.3</mapstruct.version>
     <wiremock.version>3.13.2</wiremock.version>
 
