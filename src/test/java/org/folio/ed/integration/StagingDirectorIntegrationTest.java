@@ -312,6 +312,26 @@ public class StagingDirectorIntegrationTest extends TestBase {
       .getBodyAsString(), containsString("{\"itemBarcode\":\"697685458679\"}"));
   }
 
+  @Test
+  void shouldReturnSuccessTrWhenItemReturnedHasNoBarcode() {
+    log.info("===== Receive Item Returned (IR) with no barcode, send success TR and skip return : successful =====");
+    setMessage("IR0001520240802081209              000");
+    Configuration configuration = buildConfiguration();
+
+    integrationService.registerFeedbackChannelListener(configuration);
+    integrationService.registerStatusChannelFlow(configuration);
+
+    await().atMost(1, SECONDS).untilAsserted(() ->
+      verify(serverMessageHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any()));
+
+    Map<String, ServeEvent> serveEvents = wireMockServer.getAllServeEvents()
+      .stream()
+      .collect(Collectors.toMap(e -> e.getRequest()
+        .getUrl(), identity()));
+    // No return call should happen since the IR message has no barcode.
+    assertNull(serveEvents.get("/remote-storage/return/de17bad7-2a30-4f1c-bee5-f653ded15629"));
+  }
+
   private Configuration buildConfiguration() {
     Configuration configuration = new Configuration();
     configuration.setId("de17bad7-2a30-4f1c-bee5-f653ded15629");
