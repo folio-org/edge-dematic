@@ -10,6 +10,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.http.MediaType.APPLICATION_XML;
 
+import java.util.Base64;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ import org.folio.ed.TestBase;
 import org.folio.ed.domain.dto.AsrItems;
 import org.folio.ed.domain.dto.AsrRequests;
 import org.folio.ed.domain.dto.UpdateAsrItem;
-import org.folio.edge.core.utils.ApiKeyUtils;
+import org.folio.edge.api.utils.model.ClientInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import tools.jackson.databind.json.JsonMapper;
+
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -40,7 +43,7 @@ public class EmsIntegrationTest extends TestBase {
   private static final String UPDATE_ASR_STATUS_RETRIEVED = "http://localhost:%s/asrService/asr/updateASRItemStatusBeingRetrieved";
   private static final String UPDATE_ASR_STATUS_AVAILABLE = "http://localhost:%s/asrService/asr/updateASRItemStatusAvailable";
 
-  private static final String APIKEY = ApiKeyUtils.generateApiKey("stagingDirector", TEST_TENANT, TEST_USER);
+  private static final String APIKEY = generateApiKey("stagingDirector", TEST_TENANT, TEST_USER);
 
   private String lookupNewAsrItem, lookupAsrRequests, updateAsrStatusBeingRetrieved, updateAsrStatusAvailable;
 
@@ -263,7 +266,7 @@ public class EmsIntegrationTest extends TestBase {
     log.info("===== Get items: invalid API key =====");
 
     var headers = getEmptyHeaders();
-    var invalidApiKey = ApiKeyUtils.generateApiKey("stagingDirector", "invalid_tenant", "invalid_tenant");
+    var invalidApiKey = generateApiKey("stagingDirector", "invalid_tenant", "invalid_tenant");
     var exception = assertThrows(HttpServerErrorException.InternalServerError.class,
       () -> get(lookupNewAsrItem + "/c7310e5e-c4be-4d8f-943c-faaa35679aaa?apikey=" + invalidApiKey, headers, String.class));
     assertThat(exception.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
@@ -276,5 +279,11 @@ public class EmsIntegrationTest extends TestBase {
     var exception = assertThrows(HttpServerErrorException.InternalServerError.class,
       () -> get(lookupNewAsrItem + "/c7310e5e-c4be-4d8f-943c-faaa35679aaa?apikey=1", headers, String.class));
     assertThat(exception.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
+  }
+
+  private static String generateApiKey(String salt, String tenantId, String username) {
+    var clientInfo = new ClientInfo(salt, tenantId, username);
+    var json = JsonMapper.shared().writeValueAsString(clientInfo);
+    return Base64.getUrlEncoder().encodeToString(json.getBytes());
   }
 }

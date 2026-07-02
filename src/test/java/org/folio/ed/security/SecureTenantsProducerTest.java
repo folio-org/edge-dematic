@@ -1,6 +1,6 @@
 package org.folio.ed.security;
 
-import org.folio.edge.core.security.EphemeralStore;
+import org.folio.edge.api.utils.security.EphemeralStore;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
