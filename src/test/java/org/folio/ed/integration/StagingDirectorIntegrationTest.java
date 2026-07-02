@@ -2,6 +2,8 @@ package org.folio.ed.integration;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.function.Function.identity;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.awaitility.Awaitility.await;
 import static org.folio.ed.security.DematicSecurityManagerServiceTest.OKAPI_TOKEN;
 import static org.folio.ed.support.ServerMessageHelper.setMessage;
@@ -324,12 +326,7 @@ public class StagingDirectorIntegrationTest extends TestBase {
     await().atMost(1, SECONDS).untilAsserted(() ->
       verify(serverMessageHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any()));
 
-    Map<String, ServeEvent> serveEvents = wireMockServer.getAllServeEvents()
-      .stream()
-      .collect(Collectors.toMap(e -> e.getRequest()
-        .getUrl(), identity()));
-    // No return call should happen since the IR message has no barcode.
-    assertNull(serveEvents.get("/remote-storage/return/de17bad7-2a30-4f1c-bee5-f653ded15629"));
+    wireMockServer.verify(0, putRequestedFor(urlPathMatching("/remote-storage/return/.*")));
   }
 
   private Configuration buildConfiguration() {
