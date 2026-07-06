@@ -19,7 +19,7 @@ import jakarta.annotation.Resource;
 import org.folio.ed.error.AuthorizationException;
 import org.folio.ed.security.SecureStoreFactory;
 import org.folio.ed.security.SecureTenantsProducer;
-import org.folio.edge.core.security.SecureStore;
+import org.folio.edge.api.utils.security.SecureStore;
 import org.folio.edgecommonspring.security.SecurityManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
