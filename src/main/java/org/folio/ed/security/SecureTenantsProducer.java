@@ -1,7 +1,7 @@
 package org.folio.ed.security;
 
 import lombok.extern.log4j.Log4j2;
-import org.folio.edge.core.security.SecureStore;
+import org.folio.edge.api.utils.security.SecureStore;
 
 import java.util.Optional;
 import java.util.Properties;
