@@ -24,7 +24,6 @@
   <properties>
     <java.version>21</java.version>
     <folio-spring-base.version>10.0.0</folio-spring-base.version>
-    <edge-common.version>5.1.1</edge-common.version>
     <edge-common-spring.version>4.0.0</edge-common-spring.version>
     <spring-cloud-starter-bootstrap.version>4.2.0</spring-cloud-starter-bootstrap.version>
     <openapi-generator.version>7.23.0</openapi-generator.version>
@@ -66,12 +65,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.folio</groupId>
-      <artifactId>edge-common</artifactId>
-      <version>${edge-common.version}</version>
     </dependency>
 
     <dependency>
