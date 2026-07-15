@@ -16,6 +16,7 @@ public class EdgeSecurityFilterTest extends TestBase {
 
   private static final String HEALTH_CHECK_ENDPOINT = "http://localhost:%s/admin/health";
   private static final String INFO_ENDPOINT = "http://localhost:%s/admin/info";
+  private static final String READY_ENDPOINT = "http://localhost:%s/admin/ready";
 
   @Test
   void testHealthCheck() {
@@ -32,5 +33,16 @@ public class EdgeSecurityFilterTest extends TestBase {
     var response = get(String.format(INFO_ENDPOINT, edgeDematicPort), getEmptyHeaders(), JsonNode.class);
     assertThat(response.getBody(), notNullValue());
     assertThat(response.getBody().isObject(), equalTo(true));
+  }
+
+  @Test
+  void testReady() {
+    log.info("===== Verify ready endpoint =====");
+    try {
+      var response = get(String.format(READY_ENDPOINT, edgeDematicPort), getEmptyHeaders(), String.class);
+      assertThat(response.getStatusCode().value(), org.hamcrest.Matchers.anyOf(equalTo(200), equalTo(503)));
+    } catch (org.springframework.web.client.HttpStatusCodeException e) {
+      assertThat(e.getStatusCode().value(), org.hamcrest.Matchers.anyOf(equalTo(200), equalTo(503)));
+    }
   }
 }
