@@ -1,3 +1,8 @@
+## 3.0.1 2026-07-28
+
+### Dependencies
+* Bump `edge-common-spring` from `4.0.0` to `4.0.1` ([EDGDEMATIC-144](https://folio-org.atlassian.net/browse/EDGDEMATIC-144))
+
 ## 3.0.0 2026-04-17
 
 ### Breaking changes
