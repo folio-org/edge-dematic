@@ -2,9 +2,9 @@ package org.folio.ed.security;
 
 import java.util.Properties;
 
-import org.folio.edge.core.security.AwsParamStore;
-import org.folio.edge.core.security.EphemeralStore;
-import org.folio.edge.core.security.SecureStore;
+import org.folio.edge.api.utils.security.AwsParamStore;
+import org.folio.edge.api.utils.security.EphemeralStore;
+import org.folio.edge.api.utils.security.SecureStore;
 
 import lombok.extern.slf4j.Slf4j;
 

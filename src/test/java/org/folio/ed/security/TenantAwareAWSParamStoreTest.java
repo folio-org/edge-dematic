@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Properties;
 
-import org.folio.edge.core.security.AwsParamStore;
+import org.folio.edge.api.utils.security.AwsParamStore;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

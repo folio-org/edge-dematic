@@ -1,3 +1,11 @@
+## 2.4.4 2026-09-25
+
+* Need readiness health check endpoint for this module ([EDGDEMATIC-92](https://folio-org.atlassian.net/browse/EDGDEMATIC-92))
+* FOLIO not sending ACK to remote storage ([EDGDEMATIC-143](https://folio-org.atlassian.net/browse/EDGDEMATIC-143))
+* Edge-Dematic: 500 Error from Nginx Due to Null item_barcode in accession_queue ([EDGDEMATIC-136](https://folio-org.atlassian.net/browse/EDGDEMATIC-136))
+* edge-dematic migration to use edge-common-spring ([EDGDEMATIC-15](https://folio-org.atlassian.net/browse/EDGDEMATIC-15))
+
+
 ## 2.4.3 2026-01-21
 
 * Upgrade Spring Boot from 3.4.3 to 3.4.13 to fix security vulnerabilities.

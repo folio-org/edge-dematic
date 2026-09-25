@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
-import org.folio.edge.core.security.AwsParamStore;
+import org.folio.edge.api.utils.security.AwsParamStore;
 
 import software.amazon.awssdk.services.ssm.model.GetParameterRequest;
 
