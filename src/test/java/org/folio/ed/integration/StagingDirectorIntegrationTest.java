@@ -2,6 +2,8 @@ package org.folio.ed.integration;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.function.Function.identity;
+import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.awaitility.Awaitility.await;
 import static org.folio.ed.security.DematicSecurityManagerServiceTest.OKAPI_TOKEN;
 import static org.folio.ed.support.ServerMessageHelper.setMessage;
@@ -310,6 +312,21 @@ public class StagingDirectorIntegrationTest extends TestBase {
     ServeEvent checkInServeEvent = serveEvents.get("/remote-storage/return/de17bad7-2a30-4f1c-bee5-f653ded15629");
     assertThat(checkInServeEvent.getRequest()
       .getBodyAsString(), containsString("{\"itemBarcode\":\"697685458679\"}"));
+  }
+
+  @Test
+  void shouldReturnSuccessTrWhenItemReturnedHasNoBarcode() {
+    log.info("===== Receive Item Returned (IR) with no barcode, send success TR and skip return : successful =====");
+    setMessage("IR0001520240802081209              000");
+    Configuration configuration = buildConfiguration();
+
+    integrationService.registerFeedbackChannelListener(configuration);
+    integrationService.registerStatusChannelFlow(configuration);
+
+    await().atMost(1, SECONDS).untilAsserted(() ->
+      verify(serverMessageHandler).handle(matches(TRANSACTION_RESPONSE_PATTERN), any()));
+
+    wireMockServer.verify(0, putRequestedFor(urlPathMatching("/remote-storage/return/.*")));
   }
 
   private Configuration buildConfiguration() {
