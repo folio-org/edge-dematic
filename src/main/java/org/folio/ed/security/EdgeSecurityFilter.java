@@ -27,7 +27,6 @@ public class EdgeSecurityFilter implements Filter {
 
   public static final String HEALTH_ENDPOINT = "/admin/health";
   public static final String INFO_ENDPOINT = "/admin/info";
-  public static final String READY_ENDPOINT = "/admin/ready";
 
   private final SecurityManagerService sms;
   private final ApiKeyHelper apiKeyHelper;
@@ -68,6 +67,6 @@ public class EdgeSecurityFilter implements Filter {
   }
 
   private boolean isAuthorizationNeeded(String path) {
-    return !(path.contains(HEALTH_ENDPOINT) || path.equals(INFO_ENDPOINT) || path.equals(READY_ENDPOINT));
+    return !(path.contains(HEALTH_ENDPOINT) || path.equals(INFO_ENDPOINT));
   }
 }

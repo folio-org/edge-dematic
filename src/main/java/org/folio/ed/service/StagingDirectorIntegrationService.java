@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @RequiredArgsConstructor
@@ -43,8 +42,6 @@ public class StagingDirectorIntegrationService {
 
   @Value("${primary.channel.heartbeat.timeframe}")
   private long heartbeatTimeframe;
-
-  private static final AtomicBoolean isReady = new AtomicBoolean(false);
 
   private final IntegrationFlowContext integrationFlowContext;
   private final RemoteStorageService remoteStorageService;
@@ -65,16 +62,10 @@ public class StagingDirectorIntegrationService {
           createFlows(configuration);
         }
       }
-      isReady.set(true);
     }
     catch( Exception ex) {
       log.error("createIntegrationFlows:: exception : {}, message : {}", ex, ex.getMessage());
-      isReady.set(false);
     }
-  }
-
-  public boolean isReady() {
-    return isReady.get();
   }
 
   private void createFlows(Configuration configuration) {

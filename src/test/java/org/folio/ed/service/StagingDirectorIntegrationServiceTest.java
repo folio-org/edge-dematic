@@ -35,7 +35,6 @@ public class StagingDirectorIntegrationServiceTest extends TestBase {
   void shouldGetConfigurationAndCreateIntegrationFlows() {
     await().atMost(1, TimeUnit.SECONDS).untilAsserted(() ->
       assertThat(integrationFlowContext.getRegistry().size(), is(6)));
-    assertEquals(true, integrationService.isReady());
   }
 
   @Test
@@ -54,7 +53,6 @@ public class StagingDirectorIntegrationServiceTest extends TestBase {
     verify(sms,times(1)).getStagingDirectorTenantsUsers();
     var res = verify(sms).getStagingDirectorTenantsUsers();
     assertEquals(null,res);
-    assertEquals(false, stagingDirectorIntegrationService.isReady());
   }
 
 
