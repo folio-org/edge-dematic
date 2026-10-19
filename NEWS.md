@@ -1,3 +1,9 @@
+## 2.4.5 2026-10-19
+
+* Revert Sunflower - FOLIO not sending ACK to remote storage (dematic) ([EDGDEMATIC-162](https://folio-org.atlassian.net/browse/EDGDEMATIC-162))
+* Revert Sunflower - edge-dematic migration to use edge-common-spring ([EDGDEMATIC-163](https://folio-org.atlassian.net/browse/EDGDEMATIC-163))
+* Revert Sunflower - Need readiness health check endpoint for this module ([EDGDEMATIC-164](https://folio-org.atlassian.net/browse/EDGDEMATIC-164))
+
 ## 2.4.4 2026-09-25
 
 * Need readiness health check endpoint for this module ([EDGDEMATIC-92](https://folio-org.atlassian.net/browse/EDGDEMATIC-92))
