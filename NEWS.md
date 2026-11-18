@@ -1,3 +1,8 @@
+## 3.0.3 2026-11-18
+
+### Dependencies
+* Upgrade `folio-spring-base` to 10.0.1 ([EDGDEMATIC-152](https://folio-org.atlassian.net/browse/EDGDEMATIC-152))
+
 ## 3.0.2 2026-09-25
 
 ### Bug fixes
